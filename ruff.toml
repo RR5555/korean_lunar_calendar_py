@@ -8,3 +8,5 @@ lint.extend-ignore = ["D206", "D413",
                     "D213", # first-line summary in docstring
                     "D203", # incorrect-blank-line-before-class
                     ]
+
+format.indent-style = "tab"
