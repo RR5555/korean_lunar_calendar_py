@@ -55,6 +55,50 @@ class KoreanLunarCalendar() :
 	|`\|....\|....\|....\|....\|XXXX\|....\|....\|....\|`|Lunar intercalation month (`0bXXXX`)|
 	|
 	|`\|....\|....\|....\|....\|....\|YYYY\|YYYY\|YYYY\|`|For each non-intercalation month (from 1(leftmost `Y` bit) to 12(rightmost `Y` bit)), indicates if it lasts 30 days (or 29 if `False`)|
+
+	Examples:
+
+	---
+
+	2022: 0x82c60ad5
+
+	0b1000_0010_1100_0110_0000_1010_1101_0101
+
+	Year duration (days): 0b10_1100_011: 355
+	
+	Solar intercalation year: No
+	
+	|Month|0|1|2|3|4|5|6|7|8|9|10|11|12|
+	|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+	|**Y**                           |    |1 |0 |1 |0 |1 |1 |0 |1 |0 |1 |0 |1 |
+	|**Duration (days)**             |[29]|30|29|30|29|30|30|29|30|29|30|29|30|
+	|**Lunar intercalation month**   |X   |  |  |  |  |  |  |  |  |  |  |  |  |
+
+	Year duration calculation: [29]+30*(7)+29*(5)=[29]+30*12-5=[29]+355
+	
+	---
+
+
+	2025: 0x83006a6e
+
+	0b1000_0011_0000_0000_0110_1010_0110_1110
+
+	Year duration (days): 0b11_0000_000: 384
+
+	Solar intercalation year: No
+	
+	|Month                           |0   |1 |2 |3 |4 |5 |6     |7 |8 |9 |10|11|12|
+	|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+	|**Y**                           |    |1 |0 |1 |0 |0 |1     |1 |0 |1 |1 |1 |0 |
+	|**Duration (days)**             |    |30|29|30|29|29|30[29]|30|29|30|30|30|29|
+	|**Lunar intercalation month**   |    |  |  |  |  |  |X     |  |  |  |  |  |  |
+
+	Year duration calculation: [29]+30*(7)+29*(5)=[29]+30*12-5=[29]+355=384
+
+
+	---
+
+
 	"""
 
 	KOREAN_LUNAR_MIN_VALUE: Final[int] = 10000101
@@ -262,6 +306,8 @@ class KoreanLunarCalendar() :
 
 		Reads `|0000|00XX|XXXX|XXX.|....|....|....|....|` from lunar data which indicates the year duration in days (on 9 bits, for a max of up to 511 days)
 
+		> Note: Intercalation month have a kind of dual duration (one 'normal' & one as intercalation). These are actually summed up in the regular lunar calendar, appending the intercalation before actually starting the month.
+
 		Args:
 			lunar_data (int): Lunar data of a year
 			month (int | None, optional): Month, if given. Defaults to None.
@@ -316,18 +362,20 @@ class KoreanLunarCalendar() :
 		return days
 
 	def __get_lunar_days_before_base_month(self, year:int, month:int, is_intercalation:bool) -> int:
-		"""_summary_
+		"""Get number of lunar days from the first day to the end of the given **month** for the given **year**.
+
+		If **year**<1000 or 13<=**month**<=0: Returns 0
 
 		Args:
-			year (int): _description_
-			month (int): _description_
-			is_intercalation (bool): _description_
+			year (int): Year
+			month (int): Month
+			is_intercalation (bool): Consider intercalation (ignored if `False`)
 
 		Returns:
-			int: _description_
+			int: Duration in days
 		"""
 		days:int = 0
-		if (year >= self.KOREAN_LUNAR_BASE_YEAR) and (month > 0):
+		if (year >= self.KOREAN_LUNAR_BASE_YEAR) and (13 > month > 0):
 			for base_month in range(1, month+1):
 				days += self.__get_lunar_days(year, base_month, False)
 
@@ -338,21 +386,54 @@ class KoreanLunarCalendar() :
 		return days
 
 	def __get_lunar_abs_days(self, year:int, month:int, day:int, is_intercalation:bool) -> int:
+		"""Get duration in days between lunar base year and given lunar date.
+
+		Sums up days between years, months, plus the day index and the intercalation day duration if **is_intercalation** and intercalation month is within the months preceding or being the **month** considered.
+
+		Args:
+			year (int): Year (lunar)
+			month (int): Month (lunar)
+			day (int): Day (lunar)
+			is_intercalation (bool): Indicates if lunar intercalation should be considered
+
+		Returns:
+			int: Duration in days
+		"""
 		days:int = self.__get_lunar_days_before_base_year(year-1) + self.__get_lunar_days_before_base_month(year, month-1, True) + day
 		if is_intercalation and (self.__get_lunar_intercalation_month(self.__get_lunar_data(year)) == month):
+			# TODO: Why with False???? (It gets the 'normal' month duration twice instead of the 'normal' duration and the intercalation duration)
 			days += self.__get_lunar_days(year, month, False)
 		return days
 
-	def __is_solar_intercalation_year(self, lunar_data:int) -> int:
+	def __is_solar_intercalation_year(self, lunar_data:int) -> bool:
+		"""Indicate if the lunar year is a solar intercalation year.
+
+		Right-shift by 30 bits, and mask to get the last bit:
+
+		`|0X..|....|....|....|....|....|....|....|`
+
+		Then interpret the `X` bit as a `bool` value.
+
+		Args:
+			lunar_data (int): Lunar data
+
+		Returns:
+			bool: `True` if year of lunar data is a solar intercalation year, else `False`
+		"""
 		# `|0X..|....|....|....|....|....|....|....|`
 		return ((lunar_data >> 30) & 0x01) > 0
 
-	def __get_solar_days(self, year:int, month:int|None=None) -> int:
-		lunar_data:int = self.__get_lunar_data(year)
+	def __get_solar_days_(self, lunar_data:int, month:int|None=None) -> int:
 		if month is not None :
 			days = self.SOLAR_DAYS[12] if (month == 2) and self.__is_solar_intercalation_year(lunar_data) else self.SOLAR_DAYS[month - 1]
 		else:
 			days = self.SOLAR_BIG_YEAR_DAY if self.__is_solar_intercalation_year(lunar_data) else self.SOLAR_SMALL_YEAR_DAY
+		return days
+
+
+	def __get_solar_days(self, year:int, month:int|None=None) -> int:
+		lunar_data:int = self.__get_lunar_data(year)
+		days:int = self.__get_solar_days_(lunar_data, month)
 		return days
 
 	def __get_solar_days_before_base_year(self, year:int) -> int:
