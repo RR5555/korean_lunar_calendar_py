@@ -9,6 +9,7 @@ class TestKoreanLunarCalendar():
 
 	klc:KoreanLunarCalendar
 
+
 	# @pytest.fixture(scope='class', autouse=True)
 	# @classmethod
 	# def setup_and_teardown(cls):
@@ -51,7 +52,7 @@ class TestKoreanLunarCalendar():
 		self.klc.is_intercalation = intercalation
 		assert self.klc.solar_iso_format() == res
 
-	@pytest.mark.parametrize("year, res", [(1000, 0x82c60a57), (1001, 0x82fec52b), (1586, 0x82c40d4a), (2022, 0x82c60ad5), (2049, 0x82c60ada), (2050, 0x830138b6)])
+	@pytest.mark.parametrize("year, res", [(1000, 0x82c60a57), (1001, 0x82fec52b), (1586, 0x82c40d4a), (2022, 0x82c60ad5), (2025, 0x83006a6e), (2049, 0x82c60ada), (2050, 0x830138b6)])
 	def test_get_lunar_data(self, year:int, res:int) -> None:
 		assert getattr(self.klc, '_KoreanLunarCalendar__get_lunar_data')(year) == res
 
@@ -112,12 +113,68 @@ class TestKoreanLunarCalendar():
 
 
 	@pytest.mark.parametrize("year, month, is_intercalation, res", [
-		(1000, 1, True, 355),
+		# Default cases
+		(950, 1, True, 0),
+		(1005, 0, True, 0),
+		(2025, 13, False, 0),
+		# Control & use cases
+		(1005, 1, True, 29),
+		(1000, 1, True, 30),
+		(2025, 5, True, 147),
+		(2025, 5, False, 147),
+		(2025, 12, False, 355),
+		(2025, 12, True, 384),
 	])
 	def test__get_lunar_days_before_base_month(self, year:int, month:int, is_intercalation:bool, res:int) -> None:
-		assert getattr(self.klc, '_KoreanLunarCalendar__get_lunar_days_before_base_month')(year) == res
+		assert getattr(self.klc, '_KoreanLunarCalendar__get_lunar_days_before_base_month')(year, month, is_intercalation) == res
 
 
+	@pytest.mark.parametrize("year, month, day, is_intercalation, res", [
+		# 2025 has lunar intercalation [29 days] in June [30 days] 
+		(2025, 1, 1, True, 374360),
+		(2025, 12, 29, True, 374743),
+		(2025, 5, 29, True, 374506),
+		# (2025, 5, 32, True, 374509), #This should produce an error
+		(2025, 6, 1, True, 374537),
+		(2025, 6, 1, False, 374507),
 
 
+		# 2022 has no intercalation
+		(2002, 12, 30, True, 366327),
+		(2002, 12, 30, False, 366327),
 
+		# Other samples
+		(1000, 1, 1, True, 1),
+		(1000, 1, 1, False, 1),
+
+		(1950, 9, 8, False, 347228),
+		(1879, 6, 7, True, 321211)
+	])
+	def test__get_lunar_abs_days(self, year:int, month:int, day:int, is_intercalation:bool, res:int) -> None:
+		assert getattr(self.klc, '_KoreanLunarCalendar__get_lunar_abs_days')(year, month, day, is_intercalation) == res
+
+	@pytest.mark.parametrize("lunar_data, res", [
+		
+		(0b1111_1111_1111_1111_1111_1111_1111_1111, True),
+		(0b1011_1111_1111_1111_1111_1111_1111_1111, False),
+		(0b0000_0000_0000_0000_0001_0000_0000_0000, False),
+		(0b0100_0000_0000_0000_0001_0000_0000_0000, True),
+	])
+	def test__is_solar_intercalation_year(self, lunar_data:int, res:bool) -> None:
+		assert getattr(self.klc, '_KoreanLunarCalendar__is_solar_intercalation_year')(lunar_data) == res
+
+	# @pytest.mark.parametrize("lunar_data, month, res", [
+		
+	# 	(),
+		
+	# ])
+	# def test__get_solar_days(self, lunar_data:int, month:int|None, res:int) -> None:
+	# 	assert getattr(self.klc, '_KoreanLunarCalendar__get_solar_days_')(lunar_data, month) == res
+
+	# @pytest.mark.parametrize("year, month, res", [
+		
+	# 	(),
+		
+	# ])
+	# def test__get_solar_days(self, year:int, month:int|None, res:int) -> None:
+	# 	assert getattr(self.klc, '_KoreanLunarCalendar__get_solar_days')(year, month) == res
