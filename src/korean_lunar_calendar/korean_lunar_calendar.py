@@ -23,13 +23,7 @@ from pydantic import BaseModel, Field, validate_call, dataclasses
 
 # @dataclasses.dataclass()
 class KoreanLunarCalendar() :
-	r"""Handle lunar calendar from 1000-02-13 to 2050-12-31 (solar calendar) by fetching data from look-up tables.
-
-	The lunar data is in the form:
-	
-	`|1X00|00XX|XXXX|XXXX|XXXX|XXXX|XXXX|XXXX|`
-	
-	Where:
+	r"""Handle lunar calendar from 1000-02-13 to 2050-12-31 (solar calendar).
 
 	|Bits|Desc.|
 	|:---|:---|
@@ -91,6 +85,7 @@ class KoreanLunarCalendar() :
 
 	KOREAN_LUNAR_MIN_VALUE: Final[int] = 10000101
 	KOREAN_LUNAR_MAX_VALUE: Final[int] = 20501118
+	# Lunar: 1000/01/01 -> Solar: 1000/02/13 (44th day of the year) => 43 days diff.
 	KOREAN_SOLAR_MIN_VALUE: Final[int] = 10000213
 	KOREAN_SOLAR_MAX_VALUE: Final[int] = 20501231
 
@@ -103,6 +98,7 @@ class KoreanLunarCalendar() :
 	SOLAR_SMALL_YEAR_DAY: Final[int] = 365
 	SOLAR_BIG_YEAR_DAY: Final[int] = 366
 
+	# Duration of solar month (from Jan. to Dec. + extra Feb. long version)
 	SOLAR_DAYS: Final[tuple[int, ...]] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 29)
 	KOREAN_CHEONGAN: Final[tuple[int, ...]] = (0xac11, 0xc744, 0xbcd1, 0xc815, 0xbb34, 0xae30, 0xacbd, 0xc2e0, 0xc784, 0xacc4)
 	KOREAN_GANJI: Final[tuple[int, ...]] = (0xc790, 0xcd95, 0xc778, 0xbb18, 0xc9c4, 0xc0ac, 0xc624, 0xbbf8, 0xc2e0, 0xc720, 0xc220, 0xd574)
@@ -285,21 +281,21 @@ class KoreanLunarCalendar() :
 		"""Get number of days in a given **lunar_data** year or month of the year.
 
 		If **month** is given with **is_intercalation**:
-		* If **is_intercalation** & the **month** is an intercalation month for the given year:
+		* If **is_intercalation** & the **month** is an intercalation month (here, a month where an intercalation month while be appended) for the given year:
 			Reads `|0000|0000|0000|000X|....|....|....|....|` from lunar data which indicates (`X` bit) if the intercalation month lasts 30 days (or 29 if `False`)
 		* Else:
-			Reads `|0000|0000|0000|0000|0000|YYYY|YYYY|YYYY|` from lunar data where: For each non-intercalation month (from 1(leftmost `Y` bit) to 12(rightmost `Y` bit)), indicates if it lasts 30 days (or 29 if `False`)
+			Reads `|0000|0000|0000|0000|0000|YYYY|YYYY|YYYY|` from lunar data where: For each regular month (from 1(leftmost `Y` bit) to 12(rightmost `Y` bit)), indicates if it lasts 30 days (or 29 if `False`)
 		
 		Else:
 
 		Reads `|0000|00XX|XXXX|XXX.|....|....|....|....|` from lunar data which indicates the year duration in days (on 9 bits, for a max of up to 511 days)
 
-		> Note: Intercalation month have a kind of dual duration (one 'normal' & one as intercalation). These are actually summed up in the regular lunar calendar, appending the intercalation before actually starting the month.
+		> Note: On the month of intercalation, first the month happens, then the intercalation month happens before the next month begins.
 
 		Args:
 			lunar_data (int): Lunar data of a year
 			month (int | None, optional): Month, if given. Defaults to None.
-			is_intercalation (bool | None, optional): Takes intercalation into account. Defaults to None.
+			is_intercalation (bool | None, optional): Get intercalation month duration. Defaults to None.
 
 		Returns:
 			int: Duration in days
@@ -350,7 +346,7 @@ class KoreanLunarCalendar() :
 		return days
 
 	def __get_lunar_days_before_base_month(self, year:int, month:int, is_intercalation:bool) -> int:
-		"""Get number of lunar days from the first day to the end of the given **month** for the given **year**.
+		"""Get number of lunar days from the first day of the year to the end of the given **month** for the given **year**.
 
 		If **year**<1000 or 13<=**month**<=0: Returns 0
 
@@ -376,25 +372,23 @@ class KoreanLunarCalendar() :
 	def __get_lunar_abs_days(self, year:int, month:int, day:int, is_intercalation:bool) -> int:
 		"""Get duration in days between lunar base year and given lunar date.
 
-		Sums up days between years, months, plus the day index and the intercalation day duration if **is_intercalation** and intercalation month is within the months preceding or being the **month** considered.
-
 		Args:
 			year (int): Year (lunar)
 			month (int): Month (lunar)
 			day (int): Day (lunar)
-			is_intercalation (bool): Indicates if lunar intercalation should be considered
+			is_intercalation (bool): Indicates if it is the regular or the lunar intercalation month (only affects **month** if it has an intercalation month)
 
 		Returns:
 			int: Duration in days
 		"""
 		days:int = self.__get_lunar_days_before_base_year(year-1) + self.__get_lunar_days_before_base_month(year, month-1, True) + day
 		if is_intercalation and (self.__get_lunar_intercalation_month(self.__get_lunar_data(year)) == month):
-			# TODO: Why with False???? (It gets the 'normal' month duration twice instead of the 'normal' duration and the intercalation duration)
+			# If the day is in the intercalation month, then we have to add the duration of the regular month which already happened before the intercalation.
 			days += self.__get_lunar_days(year, month, False)
 		return days
 
 	def __is_solar_intercalation_year(self, lunar_data:int) -> bool:
-		"""Indicate if the lunar year is a solar intercalation year.
+		"""Indicate if the lunar year is a solar intercalation year, i.e. it has an intercalation day (Feb. duration: 29 days instead of 28 days).
 
 		Right-shift by 30 bits, and mask to get the last bit:
 
@@ -412,7 +406,18 @@ class KoreanLunarCalendar() :
 		return ((lunar_data >> 30) & 0x01) > 0
 
 	def __get_solar_days_(self, lunar_data:int, month:int|None=None) -> int:
-		if month is not None :
+		"""Get duration of solar month for **month**, if given, else of solar year for which **lunar_data** was provided.
+
+		> Note: Solar intercalation indicates if Feb. is short or long for that year. It is extracted from **lunar_data** and taken into account for the returned duration.
+
+		Args:
+			lunar_data (int): Lunar data
+			month (int | None, optional): Month. Defaults to None.
+
+		Returns:
+			int: Duration in days
+		"""
+		if month is not None:
 			days = self.SOLAR_DAYS[12] if (month == 2) and self.__is_solar_intercalation_year(lunar_data) else self.SOLAR_DAYS[month - 1]
 		else:
 			days = self.SOLAR_BIG_YEAR_DAY if self.__is_solar_intercalation_year(lunar_data) else self.SOLAR_SMALL_YEAR_DAY
@@ -420,28 +425,76 @@ class KoreanLunarCalendar() :
 
 
 	def __get_solar_days(self, year:int, month:int|None=None) -> int:
+		"""Get duration of solar month for given **month** of given year **year**, if given, else only of given solar year.
+
+		Simply a wrapper for method **__get_solar_days_** after getting the lunar data for the given **year**.
+
+		Args:
+			year (int): Year
+			month (int | None, optional): Month. Defaults to None.
+
+		Returns:
+			int: Duration in days
+		"""
 		lunar_data:int = self.__get_lunar_data(year)
 		days:int = self.__get_solar_days_(lunar_data, month)
 		return days
 
 	def __get_solar_days_before_base_year(self, year:int) -> int:
+		"""Get duration, in days, between the begining of the base year (1000) and the end of the given year **year**.
+
+		Args:
+			year (int): Year
+
+		Returns:
+			int: Duration in days
+		"""
 		days:int = 0
 		for base_year in range(self.KOREAN_LUNAR_BASE_YEAR, year+1):
 			days += self.__get_solar_days(base_year)
 		return days
 
 	def __get_solar_days_before_base_month(self, year:int, month:int) -> int:
+		"""Get duration, in days, between the begining of the year and the end of the given month for year **year**.
+
+		Args:
+			year (int): Year
+			month (int): Month
+
+		Returns:
+			int: Duration in days
+		"""
 		days:int = 0
 		for base_month in range(1, month+1):
 			days += self.__get_solar_days(year, base_month)
 		return days
 
 	def __get_solar_abs_days(self, year:int, month:int, day:int) -> int:
+		"""Get duration in days between base lunar date (from `self.KOREAN_LUNAR_MIN_VALUE`: 1000/01/01) - or equivalently, base solar date (from `self.KOREAN_SOLAR_MIN_VALUE`: 1000/02/13) -, and the given solar date (included).
+
+		Basically, get the duration in days from the beginning of the base solar year (1000) to the given solar date. Then, substract the `self.SOLAR_LUNAR_DAY_DIFF`: 43 days, to get the difference to the beginning of the base lunar year.
+
+		Args:
+			year (int): Year
+			month (int): Month
+			day (int): Day
+
+		Returns:
+			int: Duration in days
+		"""
 		days:int = self.__get_solar_days_before_base_year(year-1) + self.__get_solar_days_before_base_month(year, month-1) + day
 		days -= self.SOLAR_LUNAR_DAY_DIFF
 		return days
 
 	def __set_solar_date_by_lunar_date(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool) -> None:
+		"""Set solar date class instance properties to given lunar date converted in solar date.
+		
+		Args:
+			lunar_year (int): Year
+			lunar_month (int): Month
+			lunar_day (int): Day
+			is_intercalation (bool): Whether the day is in the regular or intercalation month (only applied if **lunar_month** has an intercalation month)
+		"""
 		abs_days = self.__get_lunar_abs_days(lunar_year, lunar_month, lunar_day, is_intercalation)
 		solar_year:int = 0
 		solar_month:int = 0
@@ -450,7 +503,7 @@ class KoreanLunarCalendar() :
 		solar_year = lunar_year if (abs_days < self.__get_solar_abs_days(lunar_year+1, 1, 1)) else lunar_year+1
 
 		for month in range(12, 0, -1) :
-			abs_days_by_month = self.__get_solar_abs_days(solar_year, month, 1)
+			abs_days_by_month:int = self.__get_solar_abs_days(solar_year, month, 1)
 			if (abs_days >= abs_days_by_month) :
 				solar_month = month
 				solar_day = abs_days - abs_days_by_month +1
@@ -461,6 +514,13 @@ class KoreanLunarCalendar() :
 		self.solar_day  = solar_day
 
 	def __set_lunar_date_by_solar_date(self, solar_year:int, solar_month:int, solar_day:int) -> None:
+		"""Set solar date class instance properties to given solar date converted in lunar date.
+
+		Args:
+			solar_year (int): Year
+			solar_month (int): Month
+			solar_day (int): Day
+		"""
 		abs_days:int = self.__get_solar_abs_days(solar_year, solar_month, solar_day)
 		lunar_year:int = solar_year if (abs_days >= self.__get_lunar_abs_days(solar_year, 1, 1, False)) else solar_year-1
 		lunar_month:int = 0
@@ -483,6 +543,18 @@ class KoreanLunarCalendar() :
 		self.is_intercalation = is_intercalation
 
 	def __check_valid_date(self, is_lunar:bool, is_intercalation:bool, year:int, month:int, day:int) -> bool:
+		"""_summary_
+
+		Args:
+			is_lunar (bool): _description_
+			is_intercalation (bool): _description_
+			year (int): _description_
+			month (int): _description_
+			day (int): _description_
+
+		Returns:
+			bool: _description_
+		"""
 		is_valid:bool = False
 		date_value:int = year*10000 + month*100 + day
 		#1582. 10. 5 ~ 1582. 10. 14 is not valid
