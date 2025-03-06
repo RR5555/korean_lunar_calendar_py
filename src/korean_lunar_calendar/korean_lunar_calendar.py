@@ -10,21 +10,6 @@ MIT Licence
 
 ---
 
-[Wikipedia contributors. "Lunar calendar." Wikipedia, The Free Encyclopedia. Wikipedia, The Free Encyclopedia, 14 Feb. 2025. Web. 26 Feb. 2025.](https://en.wikipedia.org/w/index.php?title=Lunar_calendar&oldid=1275741076)
-* Lunar months are brought into alignment with the solar year through some process of intercalation - such as by insertion of a leap month.
-* Since each lunation is approximately 29+1⁄2 days,[1] it is common for the months of a lunar calendar to alternate between 29 and 30 days. Since the period of 12 such lunations, a lunar year, is 354 days, 8 hours, 48 minutes, 34 seconds (354.36707 days),[1] purely lunar calendars are 11 to 12 days shorter than the solar year. In purely lunar calendars, which do not make use of intercalation, the lunar months cycle through all the seasons of a solar year over the course of a 33-34 lunar-year cycle (see, e.g., list of Islamic years).
-
----
-
-[Britannica -- Lunar Calendar](https://www.britannica.com/science/lunar-calendar)
-''lunar calendar, any dating system based on a year consisting of synodic months—i.e., complete cycles of phases of the Moon. In every solar year (or year of the seasons) there are about 12.37 synodic months. Therefore, if a lunar-year calendar is to be kept in step with the seasonal year, a periodic intercalation (addition) of days is necessary.''
-
----
-
-* A lunar calendar year is made up of synodic months, which are complete cycles of the moon's phases. 
-* A synodic month takes about 29.53 days to complete. 
-* To keep a lunar calendar in sync with the seasons, days are sometimes added in a process called intercalation.
-
 By:
 @author : https://github.com/RR5555
 """
@@ -95,8 +80,11 @@ class KoreanLunarCalendar() :
 
 	Year duration calculation: [29]+30*(7)+29*(5)=[29]+30*12-5=[29]+355=384
 
+	From [Hong Kong Observatory -- Gregorian-Lunar Calendar Conversion Table of 2025 (Yi-si year of the Snake)](https://www.hko.gov.hk/en/gts/time/calendar/pdf/files/2025e.pdf): 6 month: 30 days then 29 days
 
 	---
+
+	For a lunar month, when an intercalation month happens: First, the normal month duration occurs, then the intercaltion month duration occurs. In effect, lunar year where an intercalation month happens, will have 13 months (12 regulars + one intercalation).
 
 
 	"""
