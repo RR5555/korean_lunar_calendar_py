@@ -23,7 +23,13 @@ from pydantic import BaseModel, Field, validate_call, dataclasses
 
 # @dataclasses.dataclass()
 class KoreanLunarCalendar() :
-	r"""Handle lunar calendar from 1000-02-13 to 2050-12-31 (solar calendar).
+	r"""Handle lunar calendar from 1000-02-13 (solar calendar) to 2050-12-31 (solar calendar) by fetching data from look-up tables.
+
+	The lunar data is in the form:
+
+	`|1X00|00XX|XXXX|XXXX|XXXX|XXXX|XXXX|XXXX|`
+
+	Where:
 
 	|Bits|Desc.|
 	|:---|:---|
