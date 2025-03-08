@@ -585,7 +585,7 @@ class KoreanLunarCalendar() :
 				if is_lunar and is_intercalation and self.__get_lunar_intercalation_month(self.__get_lunar_data(year)) != month:
 					is_valid = False
 
-		return is_valid                
+		return is_valid
 
 	def set_lunar_date(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool) -> bool:
 		is_valid:bool = False
