@@ -1,55 +1,36 @@
 
 import pytest
 # import msgspec
+import datetime
 
 from kr_holidays.korean_lunar_calendar import KoreanLunarCalendar
-
 
 class TestKoreanLunarCalendar():
 
 	klc:KoreanLunarCalendar
 
 
-	# @pytest.fixture(scope='class', autouse=True)
-	# @classmethod
-	# def setup_and_teardown(cls):
-	def setup_class(cls):
-		cls.klc = KoreanLunarCalendar()
-		# yield
-
-	
-
-	# @classmethod
-	# def teardown_class(cls):
-	# 	cls.info("starting class: {} execution".format(cls.__name__))
-
 	# def setup(self):
 	# 	self.klc = KoreanLunarCalendar()
 
-	# @pytest.mark.parametrize("dates, error_msg", [((1991, 1, 11), None), ((1991, 12, 31), None), ((1000, 1, 1), None), ((2025, -1, 26), ""), ((1802, 14, 18), ""), ((1802, 7, -8), ""), ((1537, 6, 34), "")])
-	# def test_init_solar(self, dates:tuple[int, int, int], error_msg:str|None):
-		# if error_msg is not None:
-		# 	with pytest.raises(msgspec.ValidationError) as val_error:
-		# 		self.klc.solar_year, self.klc.solar_month, self.klc.solar_day = dates
-		# 	print(val_error)
-		# 	# assert val_error.value.__str__() == error_msg
-		# else:
-		# 	self.klc.solar_year, self.klc.solar_month, self.klc.solar_day = dates
-
-		# self.klc.solar_year, self.klc.solar_month, self.klc.solar_day = dates
-
-		# print(f"{self.klc.solar_year}, {self.klc.solar_month}, {self.klc.solar_day}")
+	def setup_method(self):
+		self.klc = KoreanLunarCalendar()
 
 
-	# def test_lunar_intercalation_duration_data(self):
-	# 	for _idx, _lunar_data in enumerate(self.klc.KOREAN_LUNAR_DATA):
-	# 		# _bit:int = (_lunar_data >>16) & 0b01
-	# 		# assert _bit == 0, f"{_idx+1000}:{_lunar_data:0b}"
-	# 		_intercal_month:int = (_lunar_data >>12) & 0b1111
-	# 		if 13 >_intercal_month > 0:
-	# 			_month_duration:int = (_lunar_data >>12-_intercal_month) & 0b01
-	# 			_intercalation_duration:int = (_lunar_data >>16) & 0b01
-	# 			assert (_month_duration == 1 or _month_duration==_intercalation_duration), f"{_idx+1000}:{_lunar_data:0b}"
+	@pytest.mark.parametrize("year, month, day, res_weekday", [
+		(2025, 3, 8, 5), # Greg: Sat(5)
+		(1582, 10, 1, 4), # Jul: Mon(0), Greg: Fri(4)
+		(1582, 10, 10, 6), # Jul: Wed(2), Greg: Sun(6)
+		(1582, 12, 10, 4), # Jul: Mon(0), Greg: Fri(4)
+		(1582, 10, 31, 6), # Jul: Wed(2), Greg: Sun(6)
+		(1600, 1, 1, 5) # Jul: Tue(1), Greg: Sat(5)
+	])
+	def test_datetime_greg_proleptic(self, year:int, month:int, day:int, res_weekday:int):
+		_date = datetime.datetime(year, month, day)
+		assert _date.weekday() == res_weekday
+		_delta:datetime.timedelta = _date - (datetime.datetime(self.klc.KOREAN_LUNAR_BASE_YEAR, 1, 1)+ datetime.timedelta(days=self.klc.SOLAR_LUNAR_DAY_DIFF))
+		assert _delta.days == getattr(self.klc, '_KoreanLunarCalendar__get_solar_abs_days')(year, month, day) - 1
+
 
 
 	@pytest.mark.parametrize("dates, intercalation, res", [((2025, 2, 26), False, "2025-02-26"), ((54, 11, 26), True, "0054-11-26 Intercalation")])
