@@ -580,6 +580,10 @@ class KoreanLunarCalendar() :
 
 				if day <= day_limit :
 					is_valid = True
+				
+				# Check whether intercalation is correct for lunar date
+				if is_lunar and is_intercalation and self.__get_lunar_intercalation_month(self.__get_lunar_data(year)) != month:
+					is_valid = False
 
 		return is_valid                
 
@@ -589,7 +593,9 @@ class KoreanLunarCalendar() :
 			self.lunar_year = lunar_year
 			self.lunar_month = lunar_month
 			self.lunar_day = lunar_day
-			self.is_intercalation = is_intercalation and (self.__get_lunar_intercalation_month(self.__get_lunar_data(lunar_year)) == lunar_month)
+			# Check pushed to __check_valid_date
+			# self.is_intercalation = is_intercalation and (self.__get_lunar_intercalation_month(self.__get_lunar_data(lunar_year)) == lunar_month)
+			self.is_intercalation = is_intercalation
 			self.__set_solar_date_by_lunar_date(lunar_year, lunar_month, lunar_day, is_intercalation)
 			is_valid = True
 		return is_valid
