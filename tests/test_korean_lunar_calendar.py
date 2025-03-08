@@ -193,7 +193,21 @@ class TestKoreanLunarCalendar():
 		(2025, 4, 30),
 		(2025, 12, 31),
 		(2025, 2, 28),
-		(2048, 2, 29)
+		(2048, 2, 29),
+
+		# 1582
+		(1582, 10, 31),
+		(1582, 12, 31),
+		(1582, None, 365),
+
+		# 1752
+		(1752, None, 366),
+
+
+		# 1896
+		(1896, None, 366),
+
+
 	])
 	def test__get_solar_days(self, year:int, month:int|None, res:int) -> None:
 		assert getattr(self.klc, '_KoreanLunarCalendar__get_solar_days')(year, month) == res
@@ -235,6 +249,17 @@ class TestKoreanLunarCalendar():
 		(1000, 2, 14, 2),
 		(1000, 2, 25, 13),
 		(1000, 12, 31, 322), # 365-43
+
+		# 1582
+		(1582, 10, 1, 212802),
+		(1582, 10, 3, 212804),
+		(1582, 10, 4, 212805),
+		(1582, 10, 5, 212806),
+		(1582, 10, 8, 212809),
+		(1582, 10, 13, 212814),
+		(1582, 10, 14, 212815),
+		(1582, 10, 15, 212816),
+
 
 		(1356, 4, 27, 130101),
 		(2024, 6, 13, 374130),
@@ -330,8 +355,41 @@ class TestKoreanLunarCalendar():
 
 	@pytest.mark.parametrize("is_lunar, is_intercalation, year, month, day, res", [
 		
+		# Test Intercalation
 		(True, False, 1000, 1, 1, True),
-		(True, True, 1000, 1, 1, True), # It is not checked whether intercalation is correct...
+		(True, True, 1000, 1, 1, False),
+		(True, True, 2025, 1, 1, False),
+		(False, True, 2025, 1, 1, True),
+
+		# 2025 Jun [30 days], June intercalation month [29 days]
+		(True, True, 2025, 6, 29, True),
+		(True, True, 2025, 6, 30, False),
+		(True, False, 2025, 6, 30, True),
+
+		# Month bound
+		(False, False, 2025, 1, 1, True),
+		(False, False, 2025, -1, 1, False),
+		(False, False, 2025, 12, 31, True),
+		(False, False, 2025, 13, 1, False),
+		(True, False, 2025, 1, 1, True),
+		(True, False, 2025, -1, 1, False),
+		(True, False, 2025, 12, 29, True),
+		(True, False, 2025, 13, 1, False),
+
+		# Day bound
+		(False, False, 2025, 1, 0, False),
+		(False, False, 2025, 1, 32, False),
+		(False, False, 2025, 2, 30, False),
+
+		(True, False, 2025, 1, 0, False),
+		(True, False, 2025, 1, 31, False),
+
+		# Year bound
+		(True, False, 1000, 1, 1, True),
+		(True, False, 999, 12, 29, False),
+		(False, False, 1000, 2, 13, True),
+		(False, False, 1000, 2, 12, False),
+
 
 	])
 	def test__check_valid_date(self, is_lunar:bool, is_intercalation:bool, year:int, month:int, day:int, res:bool) -> None: # noqa: PLR0913
@@ -339,16 +397,28 @@ class TestKoreanLunarCalendar():
 
 
 
-	# @pytest.mark.parametrize("solar_year, solar_month, solar_day, res", [
+	@pytest.mark.parametrize("lunar_year, lunar_month, lunar_day, is_intercalation, is_valid, res", [
 		
-	# 	(1000, 1, 1, True, (1000, 2, 13)),
-	# 	(1000, 1, 2, True, (1000, 2, 14)),
-	# 	(2025, 10, 8, True, (2025, 11, 27)),
-	# 	(2025, 10, 9, False, (2025, 11, 28)),
+		(1000, 1, 1, False, True, (1000, 2, 13, 1000, 1, 1, False)),
+		(999, 1, 1, False, False, (0, 1, 1, 0, 1, 1, False)),
 
-	# ])
-	# def test__set_solar_date_by_lunar_date(self, solar_year:int, solar_month:int, solar_day:int, res:tuple[int, int, int, int]) -> None:
-	# 	getattr(self.klc, '_KoreanLunarCalendar__set_solar_date_by_lunar_date')(solar_year, solar_month, solar_day)
-	# 	assert (self.klc.lunar_year, self.klc.lunar_month, self.klc.lunar_day, self.klc.is_intercalation) == res
+	])
+	def test_set_lunar_date(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool, is_valid:bool, res:tuple[int, int, int, int, int, int, bool]) -> None:
+		assert self.klc.set_lunar_date(lunar_year, lunar_month, lunar_day, is_intercalation) == is_valid
+		assert (self.klc.solar_year, self.klc.solar_month, self.klc.solar_day, self.klc.lunar_year, self.klc.lunar_month, self.klc.lunar_day, self.klc.is_intercalation) == res
+
+	@pytest.mark.parametrize("solar_year, solar_month, solar_day, is_valid, res", [
+		
+		(1000, 2, 13, True, (1000, 2, 13, 1000, 1, 1, False)),
+		(1000, 2, 12, False, (0, 1, 1, 0, 1, 1, False)),
+
+	])
+	def test_set_solar_date(self, solar_year:int, solar_month:int, solar_day:int, is_valid:bool, res:tuple[int, int, int, int, int, int, bool]) -> None:
+		assert self.klc.set_solar_date(solar_year, solar_month, solar_day) == is_valid
+		assert (self.klc.solar_year, self.klc.solar_month, self.klc.solar_day, self.klc.lunar_year, self.klc.lunar_month, self.klc.lunar_day, self.klc.is_intercalation) == res
+
+
+
+
 
 
