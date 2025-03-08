@@ -10,6 +10,8 @@ MIT Licence
 
 ---
 
+To Gregorian proleptic calendar.
+
 By:
 @author : https://github.com/RR5555
 """
@@ -563,18 +565,18 @@ class KoreanLunarCalendar() :
 		"""
 		is_valid:bool = False
 		date_value:int = year*10000 + month*100 + day
-		#1582. 10. 5 ~ 1582. 10. 14 is not valid
+		#1582. 10. 5 ~ 1582. 10. 14 is not valid when strictly considering Julian/Gregorian: But is valid in Gregorian Proleptic
 		min_value:int = self.KOREAN_LUNAR_MIN_VALUE if is_lunar else self.KOREAN_SOLAR_MIN_VALUE
 		max_value:int = self.KOREAN_LUNAR_MAX_VALUE if is_lunar else self.KOREAN_SOLAR_MAX_VALUE
 
 		if min_value <= date_value and max_value >= date_value : # noqa: SIM102
 			if month > 0 and month < 13 and day > 0 :
 				day_limit = self.__get_lunar_days(year, month, is_intercalation) if is_lunar else self.__get_solar_days(year, month)
-				if not is_lunar and year == 1582 and month == 10 :
-					if day > 4 and day < 15 :
-						return is_valid
-					else:
-						day_limit += 10
+				# if not is_lunar and year == 1582 and month == 10 :
+				# 	if day > 4 and day < 15 :
+				# 		return is_valid
+				# 	else:
+				# 		day_limit += 10
 
 				if day <= day_limit :
 					is_valid = True
