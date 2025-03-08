@@ -551,17 +551,17 @@ class KoreanLunarCalendar() :
 		self.is_intercalation = is_intercalation
 
 	def __check_valid_date(self, is_lunar:bool, is_intercalation:bool, year:int, month:int, day:int) -> bool:
-		"""_summary_
+		"""Check if the given date is valid.
 
 		Args:
-			is_lunar (bool): _description_
-			is_intercalation (bool): _description_
-			year (int): _description_
-			month (int): _description_
-			day (int): _description_
+			is_lunar (bool): Lunar or solar date
+			is_intercalation (bool): Intercalation (has to exist if lunar date) or regular month
+			year (int): Year
+			month (int): Month
+			day (int): Day
 
 		Returns:
-			bool: _description_
+			bool: Indicates if given date is valid
 		"""
 		is_valid:bool = False
 		date_value:int = year*10000 + month*100 + day
@@ -588,6 +588,17 @@ class KoreanLunarCalendar() :
 		return is_valid
 
 	def set_lunar_date(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool) -> bool:
+		"""Check if given lunar date is valid & subsequently set the internal dates (lunar & solar) to the one given, if it is valid.
+
+		Args:
+			lunar_year (int): Year
+			lunar_month (int): month
+			lunar_day (int): Day
+			is_intercalation (bool): Intercalation (has to exist) or regular month 
+
+		Returns:
+			bool: Indicates if given lunar date is valid
+		"""
 		is_valid:bool = False
 		if self.__check_valid_date(True, is_intercalation, lunar_year, lunar_month, lunar_day):
 			self.lunar_year = lunar_year
@@ -601,6 +612,16 @@ class KoreanLunarCalendar() :
 		return is_valid
 
 	def set_solar_date(self, solar_year:int, solar_month:int, solar_day:int) -> bool:
+		"""Check if given solar date is valid & subsequently set the internal dates (lunar & solar) to the one given, if it is valid.
+
+		Args:
+			solar_year (int): Year
+			solar_month (int): Month
+			solar_day (int): Day
+
+		Returns:
+			bool: Indicates if given solar date is valid
+		"""
 		is_valid:bool = False
 		if self.__check_valid_date(False, False, solar_year, solar_month, solar_day) :
 			self.solar_year = solar_year
