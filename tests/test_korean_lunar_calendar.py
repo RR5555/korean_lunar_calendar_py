@@ -418,7 +418,101 @@ class TestKoreanLunarCalendar():
 		assert (self.klc.solar_year, self.klc.solar_month, self.klc.solar_day, self.klc.lunar_year, self.klc.lunar_month, self.klc.lunar_day, self.klc.is_intercalation) == res
 
 
+	@pytest.mark.parametrize("lunar_year, lunar_month, lunar_day, is_intercalation, gapja_year_inx, gapja_month_inx, gapja_day_inx", [
+		
+		(1000, 1, 1, False, [6, 0, 0], [4, 2, 1], [5, 3, 2]),
 
+	])
+	def test__get_gap_ja(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool, gapja_year_inx:list[int], gapja_month_inx:list[int], gapja_day_inx:list[int]) -> None: # noqa: PLR0913
+		self.klc.set_lunar_date(lunar_year, lunar_month, lunar_day, is_intercalation)
+		getattr(self.klc, '_KoreanLunarCalendar__get_gap_ja')()
+		assert getattr(self.klc, '_KoreanLunarCalendar__gapjaYearInx') == gapja_year_inx
+		assert getattr(self.klc, '_KoreanLunarCalendar__gapjaMonthInx') == gapja_month_inx
+		assert getattr(self.klc, '_KoreanLunarCalendar__gapjaDayInx') == gapja_day_inx
+
+
+	@pytest.mark.parametrize("idx, res", [
+		(0, "갑"),
+		(1, "을"),
+		(2, "병"),
+		(3, "정"),
+		(4, "무"),
+		(5, "기"),
+		(6, "경"),
+		(7, "신"),
+		(8, "임"),
+		(9, "계"),
+	])
+	def test_kr_cheongan_string(self, idx:int, res:str) -> None:
+		assert chr(self.klc.KOREAN_CHEONGAN[idx]) == res
+
+	@pytest.mark.parametrize("idx, res", [
+		(0, "자"),
+		(1, "축"),
+		(2, "인"),
+		(3, "묘"),
+		(4, "진"),
+		(5, "사"),
+		(6, "오"),
+		(7, "미"),
+		(8, "신"),
+		(9, "유"),
+		(10, "술"),
+		(11, "해"),
+	])
+	def test_kr_ganji_string(self, idx:int, res:str) -> None:
+		assert chr(self.klc.KOREAN_GANJI[idx]) == res
+
+	@pytest.mark.parametrize("idx, res", [
+		(0, "甲"),
+		(1, "乙"),
+		(2, "丙"),
+		(3, "丁"),
+		(4, "戊"),
+		(5, "己"),
+		(6, "庚"),
+		(7, "辛"),
+		(8, "壬"),
+		(9, "癸"),
+	])
+	def test_cn_cheongan_string(self, idx:int, res:str) -> None:
+		assert chr(self.klc.CHINESE_CHEONGAN[idx]) == res
+
+	@pytest.mark.parametrize("idx, res", [
+		(0, "子"),
+		(1, "丑"),
+		(2, "寅"),
+		(3, "卯"),
+		(4, "辰"),
+		(5, "巳"),
+		(6, "午"),
+		(7, "未"),
+		(8, "申"),
+		(9, "酉"),
+		(10, "戌"),
+		(11, "亥"),
+	])
+	def test_cn_ganji_string(self, idx:int, res:str) -> None:
+		assert chr(self.klc.CHINESE_GANJI[idx]) == res
+
+
+	@pytest.mark.parametrize("lunar_year, lunar_month, lunar_day, is_intercalation, res", [
+		
+		(2025, 1, 1, False, "을사년 무인월 무술일"), # Indeed: 2025: Wood Snake
+		(2025, 6, 1, True, "을사년 계미월 을미일 (윤월)"),
+	])
+	def test_get_gap_ja_string(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool, res:str) -> None:
+		self.klc.set_lunar_date(lunar_year, lunar_month, lunar_day, is_intercalation)
+		assert self.klc.get_gap_ja_string() == res
+
+	@pytest.mark.parametrize("lunar_year, lunar_month, lunar_day, is_intercalation, res", [
+		
+		(2025, 1, 1, False, "乙巳年 戊寅月 戊戌日"),
+		(2025, 6, 1, True, "乙巳年 癸未月 乙未日 (閏月)"),
+	])
+	def test_get_chinese_gap_ja_string(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool, res:str) -> None:
+		self.klc.set_lunar_date(lunar_year, lunar_month, lunar_day, is_intercalation)
+		assert self.klc.get_chinese_gap_ja_string() == res
 
 
 
