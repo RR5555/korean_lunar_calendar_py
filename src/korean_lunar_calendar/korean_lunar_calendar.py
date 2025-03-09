@@ -672,6 +672,45 @@ class KoreanLunarCalendar() :
 			self.__gapjaDayInx[0] = (abs_days + 4) % len(self.KOREAN_CHEONGAN)
 			self.__gapjaDayInx[1] = (abs_days + 2) % len(self.KOREAN_GANJI)
 
+
+	def _get_gap_ja_str(self, gapja_type:str) -> str:
+		"""Get the characters associated with the stored gapja indexes in the chosen language.
+
+		Args:
+			gapja_type (str): ISO 3166 of Korea ('KR') or China ('CN')
+
+		Raises:
+			ValueError: If **gapja_type** is not valid
+
+		Returns:
+			str: `CGU CGU CGU` or `CGU CGU CGU (IU)` where:
+				* `C`: Cheongan character
+				* `G`: Ganji character
+				* `U`: Unit character
+				* `I`: Intercalation/Leap character
+		"""
+		_kr = ('KR',)
+		_cn = ('CN',)
+		if gapja_type in _kr:
+			cheongan:tuple[int, ...] = self.KOREAN_CHEONGAN
+			ganji: tuple[int, ...] = self.KOREAN_GANJI
+			gapja_unit:tuple[int, ...] = self.KOREAN_GAPJA_UNIT
+			intercalation_str:int = self.INTERCALATION_STR[0]
+		elif gapja_type in _cn:
+			cheongan = self.CHINESE_CHEONGAN
+			ganji = self.CHINESE_GANJI
+			gapja_unit = self.CHINESE_GAPJA_UNIT
+			intercalation_str = self.INTERCALATION_STR[1]
+		else:
+			raise ValueError(f"gapja_type is:{gapja_type}\nShould be:\nKorean: {_kr} OR Chinese: {_cn}")
+		gapja_str:str = "%c%c%c %c%c%c %c%c%c" % (chr(cheongan[self.__gapjaYearInx[0]]), chr(ganji[self.__gapjaYearInx[1]]), chr(gapja_unit[self.__gapjaYearInx[2]]),
+		chr(cheongan[self.__gapjaMonthInx[0]]), chr(ganji[self.__gapjaMonthInx[1]]), chr(gapja_unit[self.__gapjaMonthInx[2]]),
+		chr(cheongan[self.__gapjaDayInx[0]]), chr(ganji[self.__gapjaDayInx[1]]), chr(gapja_unit[self.__gapjaDayInx[2]]))
+
+		if self.is_intercalation:
+			gapja_str += " (%c%c)" % (chr(intercalation_str), chr(gapja_unit[1]))
+		return gapja_str
+
 	def get_gap_ja_string(self) -> str:
 		"""Get Korean gapja string for stored lunar date.
 
@@ -683,12 +722,7 @@ class KoreanLunarCalendar() :
 				* `I`: Intercalation/Leap character
 		"""
 		self.__get_gap_ja()
-		gapja_str:str = "%c%c%c %c%c%c %c%c%c" % (chr(self.KOREAN_CHEONGAN[self.__gapjaYearInx[0]]), chr(self.KOREAN_GANJI[self.__gapjaYearInx[1]]), chr(self.KOREAN_GAPJA_UNIT[self.__gapjaYearInx[2]]),
-		chr(self.KOREAN_CHEONGAN[self.__gapjaMonthInx[0]]), chr(self.KOREAN_GANJI[self.__gapjaMonthInx[1]]), chr(self.KOREAN_GAPJA_UNIT[self.__gapjaMonthInx[2]]),
-		chr(self.KOREAN_CHEONGAN[self.__gapjaDayInx[0]]), chr(self.KOREAN_GANJI[self.__gapjaDayInx[1]]), chr(self.KOREAN_GAPJA_UNIT[self.__gapjaDayInx[2]]))
-
-		if self.is_intercalation:
-			gapja_str += " (%c%c)" % (chr(self.INTERCALATION_STR[0]), chr(self.KOREAN_GAPJA_UNIT[1]))
+		gapja_str:str = self._get_gap_ja_str(gapja_type='KR')
 		return gapja_str
 		
 
@@ -703,10 +737,6 @@ class KoreanLunarCalendar() :
 				* `I`: Intercalation/Leap character
 		"""
 		self.__get_gap_ja()
-		gapja_str:str = "%c%c%c %c%c%c %c%c%c" % (chr(self.CHINESE_CHEONGAN[self.__gapjaYearInx[0]]), chr(self.CHINESE_GANJI[self.__gapjaYearInx[1]]), chr(self.CHINESE_GAPJA_UNIT[self.__gapjaYearInx[2]]),
-		chr(self.CHINESE_CHEONGAN[self.__gapjaMonthInx[0]]), chr(self.CHINESE_GANJI[self.__gapjaMonthInx[1]]), chr(self.CHINESE_GAPJA_UNIT[self.__gapjaMonthInx[2]]),
-		chr(self.CHINESE_CHEONGAN[self.__gapjaDayInx[0]]), chr(self.CHINESE_GANJI[self.__gapjaDayInx[1]]), chr(self.CHINESE_GAPJA_UNIT[self.__gapjaDayInx[2]]))
+		gapja_str:str = self._get_gap_ja_str(gapja_type='CN')
 
-		if self.is_intercalation:
-			gapja_str += " (%c%c)" % (chr(self.INTERCALATION_STR[1]), chr(self.CHINESE_GAPJA_UNIT[1]))
 		return gapja_str
