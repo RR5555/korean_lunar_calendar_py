@@ -108,15 +108,17 @@ class KoreanLunarCalendar() :
 
 	# Duration of solar month (from Jan. to Dec. + extra Feb. long version)
 	SOLAR_DAYS: Final[tuple[int, ...]] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 29)
-	KOREAN_CHEONGAN: Final[tuple[int, ...]] = (0xac11, 0xc744, 0xbcd1, 0xc815, 0xbb34, 0xae30, 0xacbd, 0xc2e0, 0xc784, 0xacc4)
-	KOREAN_GANJI: Final[tuple[int, ...]] = (0xc790, 0xcd95, 0xc778, 0xbb18, 0xc9c4, 0xc0ac, 0xc624, 0xbbf8, 0xc2e0, 0xc720, 0xc220, 0xd574)
-	KOREAN_GAPJA_UNIT: Final[tuple[int, ...]] = (0xb144, 0xc6d4, 0xc77c)
 
-	CHINESE_CHEONGAN: Final[tuple[int, ...]] = (0x7532, 0x4e59, 0x4e19, 0x4e01, 0x620a, 0x5df1, 0x5e9a, 0x8f9b, 0x58ec, 0x7678)
-	CHINESE_GANJI: Final[tuple[int, ...]] = (0x5b50, 0x4e11, 0x5bc5, 0x536f, 0x8fb0, 0x5df3, 0x5348, 0x672a, 0x7533, 0x9149, 0x620c, 0x4ea5)
-	CHINESE_GAPJA_UNIT: Final[tuple[int, ...]] = (0x5e74, 0x6708, 0x65e5)
+	# Cheongan 10 year cycles, ganji 12 year cycle
+	KOREAN_CHEONGAN: Final[tuple[int, ...]] = (0xac11, 0xc744, 0xbcd1, 0xc815, 0xbb34, 0xae30, 0xacbd, 0xc2e0, 0xc784, 0xacc4) # 10
+	KOREAN_GANJI: Final[tuple[int, ...]] = (0xc790, 0xcd95, 0xc778, 0xbb18, 0xc9c4, 0xc0ac, 0xc624, 0xbbf8, 0xc2e0, 0xc720, 0xc220, 0xd574) # 12
+	KOREAN_GAPJA_UNIT: Final[tuple[int, ...]] = (0xb144, 0xc6d4, 0xc77c) # 3 년, 월, 일: year, month, day in korean
 
-	INTERCALATION_STR: Final[tuple[int, ...]] = (0xc724, 0x958f)
+	CHINESE_CHEONGAN: Final[tuple[int, ...]] = (0x7532, 0x4e59, 0x4e19, 0x4e01, 0x620a, 0x5df1, 0x5e9a, 0x8f9b, 0x58ec, 0x7678) # 10
+	CHINESE_GANJI: Final[tuple[int, ...]] = (0x5b50, 0x4e11, 0x5bc5, 0x536f, 0x8fb0, 0x5df3, 0x5348, 0x672a, 0x7533, 0x9149, 0x620c, 0x4ea5) # 12
+	CHINESE_GAPJA_UNIT: Final[tuple[int, ...]] = (0x5e74, 0x6708, 0x65e5) # 3 年, 月, 日: year, month day in chinese
+
+	INTERCALATION_STR: Final[tuple[int, ...]] = (0xc724, 0x958f) # 2 ('윤', '閏'): Leap, resp. in korean, and in chinese
 
 	# 8 figure hexadecimal -> 32bits; len: 1051;
 	KOREAN_LUNAR_DATA: Final[tuple[int, ...]] = (
@@ -237,6 +239,7 @@ class KoreanLunarCalendar() :
 		self.solar_month:int = 1
 		self.solar_day:int = 1
 
+		# [Cheongan, Ganji, Unit]
 		self.__gapjaYearInx:list[int] = [0, 0, 0]
 		self.__gapjaMonthInx:list[int] = [0, 0, 1]
 		self.__gapjaDayInx:list[int] = [0, 0, 2]
