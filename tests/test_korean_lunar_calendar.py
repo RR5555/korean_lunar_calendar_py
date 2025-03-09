@@ -403,7 +403,7 @@ class TestKoreanLunarCalendar():
 		(999, 1, 1, False, False, (0, 1, 1, 0, 1, 1, False)),
 
 	])
-	def test_set_lunar_date(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool, is_valid:bool, res:tuple[int, int, int, int, int, int, bool]) -> None:
+	def test_set_lunar_date(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool, is_valid:bool, res:tuple[int, int, int, int, int, int, bool]) -> None: # noqa: PLR0913
 		assert self.klc.set_lunar_date(lunar_year, lunar_month, lunar_day, is_intercalation) == is_valid
 		assert (self.klc.solar_year, self.klc.solar_month, self.klc.solar_day, self.klc.lunar_year, self.klc.lunar_month, self.klc.lunar_day, self.klc.is_intercalation) == res
 
