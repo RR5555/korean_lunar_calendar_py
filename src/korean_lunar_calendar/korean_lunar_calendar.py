@@ -635,6 +635,30 @@ class KoreanLunarCalendar() :
 		return is_valid
 
 	def __get_gap_ja(self) -> None:
+		"""Set the gapja indexes for the stored lunar date (`self.lunar_year`, `self.lunar_month`, `self.lunar_day`, `self.is_intercalation`).
+
+		Lunar-based.
+
+		The gapja for a year, a month or a day is composed of a Cheongan (stem, sky) among 10 (cardinal color and element are derived from it) and a Ganji (branch, earth) among 12 (also corresponding to the Chinese Zodiac animals/signs)
+
+		Gapja year index (`self.__gapjaYearInx`):
+		* 0: Cheongan: 10 year cycle: index in the cycle [0-9]
+		* 1: Ganji: 12 year cycle: index in the cycle [0-11]
+		* 2: Unit: 0 (corresponding to year)
+
+		Gapja month index (`self.__gapjaMonthInx`): based on month without considering lunar intercalation months
+		* 0: Cheongan: 10 month cycle: index in the cycle [0-9]
+		* 1: Ganji: 12 month cycle: index in the cycle [0-11]
+		* 2: Unit: 1 (corresponding to month)
+
+		Gapja day index (`self.__gapjaDayInx`):
+		* 0: Cheongan: 10 day cycle: index the cycle [0-9]
+		* 1: Ganji: 12 day cycle: index in the cycle [0-11]
+		* 2: Unit: 2 (corresponding to day)
+
+		NOTE: Lunar Intercalation months are ignored when determining the gapja for the month.
+
+		"""
 		abs_days:int = self.__get_lunar_abs_days(self.lunar_year, self.lunar_month, self.lunar_day, self.is_intercalation)
 		if abs_days > 0 :
 			self.__gapjaYearInx[0] = ((self.lunar_year + 6) - self.KOREAN_LUNAR_BASE_YEAR) % len(self.KOREAN_CHEONGAN)
