@@ -40,9 +40,12 @@ class KoreanLunarCalendar() :
 	|
 	|`\|....\|....\|....\|....\|....\|YYYY\|YYYY\|YYYY\|`|For each non-intercalation month (from 1(leftmost `Y` bit) to 12(rightmost `Y` bit)), indicates if it lasts 30 days (or 29 if `False`)|
 
-	Examples:
-
+	Examples
+	--------
 	---
+
+	2022
+	----
 
 	2022: 0x82c60ad5
 
@@ -62,6 +65,8 @@ class KoreanLunarCalendar() :
 	
 	---
 
+	2025
+	----
 
 	2025: 0x83006a6e
 
