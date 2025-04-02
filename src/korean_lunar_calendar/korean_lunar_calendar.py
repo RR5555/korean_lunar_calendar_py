@@ -16,14 +16,11 @@ By:
 @author : https://github.com/RR5555
 """
 
-from typing import Final, Annotated, Any
-from pydantic import BaseModel, Field, validate_call, dataclasses
-# from typing import get_type_hints, get_origin, get_args
+from typing import Final
 
 
 # ruff: noqa: PLR2004
 
-# @dataclasses.dataclass()
 class KoreanLunarCalendar() :
 	r"""Handle lunar calendar from 1000-02-13 (solar calendar) to 2050-12-31 (solar calendar) by fetching data from look-up tables.
 
