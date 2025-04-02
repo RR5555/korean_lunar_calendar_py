@@ -3,7 +3,7 @@ import pytest
 # import msgspec
 import datetime
 
-from kr_holidays.korean_lunar_calendar import KoreanLunarCalendar
+from korean_lunar_calendar.korean_lunar_calendar import KoreanLunarCalendar
 
 class TestKoreanLunarCalendar():
 
