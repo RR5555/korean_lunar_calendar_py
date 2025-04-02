@@ -40,4 +40,5 @@ dev = [
     "pytest",
     "pytest-cov",
     "ruff",
+    "tox-uv; python_version >= '3.9'",
 ]
