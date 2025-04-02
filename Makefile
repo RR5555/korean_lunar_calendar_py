@@ -14,6 +14,16 @@ docker-bash: ## Access container bash
 	docker exec -it $(NAME) /bin/bash
 
 
+lint: ## Run linter [dev]
+	uv run ruff check .
+
+format: ## Run formatter [dev]
+	uv run ruff format --diff .
+
+tox-run: ## Launch Tox [dev]
+	uv run tox
+
+
 
 # https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .PHONY: help
