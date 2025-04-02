@@ -1,40 +1,46 @@
-# -*- coding: utf-8 -*-
-
 """
-KoreanLunarCalendar
+Modified from:
+KoreanLunarCalendar [korean_lunar_calendar/korean_lunar_calendar.py](https://github.com/usingsky/korean_lunar_calendar_py/blob/master/korean_lunar_calendar/korean_lunar_calendar.py)
 Here is a library to convert Korean lunar-calendar to Gregorian calendar.
 Korean calendar and Chinese calendar is same lunar calendar but have different date.
 This follow the KARI(Korea Astronomy and Space Science Institute)
 @author : usingsky@gmail.com
+MIT Licence
+
+By:
+@author : https://github.com/RR5555
 """
 
-import datetime
+from typing import Final
+
+# ruff: noqa: PLR2004
+
 class KoreanLunarCalendar(object) :
-    KOREAN_LUNAR_MIN_VALUE = 10000101
-    KOREAN_LUNAR_MAX_VALUE = 20501118
-    KOREAN_SOLAR_MIN_VALUE = 10000213
-    KOREAN_SOLAR_MAX_VALUE = 20501231
+    KOREAN_LUNAR_MIN_VALUE: Final[int] = 10000101
+    KOREAN_LUNAR_MAX_VALUE: Final[int] = 20501118
+    KOREAN_SOLAR_MIN_VALUE: Final[int] = 10000213
+    KOREAN_SOLAR_MAX_VALUE: Final[int] = 20501231
     
-    KOREAN_LUNAR_BASE_YEAR = 1000
-    SOLAR_LUNAR_DAY_DIFF = 43
+    KOREAN_LUNAR_BASE_YEAR: Final[int] = 1000
+    SOLAR_LUNAR_DAY_DIFF: Final[int] = 43
     
-    LUNAR_SMALL_MONTH_DAY = 29
-    LUNAR_BIG_MONTH_DAY = 30
-    SOLAR_SMALL_YEAR_DAY = 365
-    SOLAR_BIG_YEAR_DAY = 366
+    LUNAR_SMALL_MONTH_DAY: Final[int] = 29
+    LUNAR_BIG_MONTH_DAY: Final[int] = 30
+    SOLAR_SMALL_YEAR_DAY: Final[int] = 365
+    SOLAR_BIG_YEAR_DAY: Final[int] = 366
 
-    SOLAR_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 29]
-    KOREAN_CHEONGAN = [0xac11, 0xc744, 0xbcd1, 0xc815, 0xbb34, 0xae30, 0xacbd, 0xc2e0, 0xc784, 0xacc4]
-    KOREAN_GANJI = [0xc790, 0xcd95, 0xc778, 0xbb18, 0xc9c4, 0xc0ac, 0xc624, 0xbbf8, 0xc2e0, 0xc720, 0xc220, 0xd574]
-    KOREAN_GAPJA_UNIT = [0xb144, 0xc6d4, 0xc77c]
+    SOLAR_DAYS: Final[tuple[int, ...]] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 29)
+    KOREAN_CHEONGAN: Final[tuple[int, ...]] = (0xac11, 0xc744, 0xbcd1, 0xc815, 0xbb34, 0xae30, 0xacbd, 0xc2e0, 0xc784, 0xacc4)
+    KOREAN_GANJI: Final[tuple[int, ...]] = (0xc790, 0xcd95, 0xc778, 0xbb18, 0xc9c4, 0xc0ac, 0xc624, 0xbbf8, 0xc2e0, 0xc720, 0xc220, 0xd574)
+    KOREAN_GAPJA_UNIT: Final[tuple[int, ...]] = (0xb144, 0xc6d4, 0xc77c)
 
-    CHINESE_CHEONGAN = [0x7532, 0x4e59, 0x4e19, 0x4e01, 0x620a, 0x5df1, 0x5e9a, 0x8f9b, 0x58ec, 0x7678]
-    CHINESE_GANJI = [0x5b50, 0x4e11, 0x5bc5, 0x536f, 0x8fb0, 0x5df3, 0x5348, 0x672a, 0x7533, 0x9149, 0x620c, 0x4ea5]
-    CHINESE_GAPJA_UNIT = [0x5e74, 0x6708, 0x65e5]
+    CHINESE_CHEONGAN: Final[tuple[int, ...]] = (0x7532, 0x4e59, 0x4e19, 0x4e01, 0x620a, 0x5df1, 0x5e9a, 0x8f9b, 0x58ec, 0x7678)
+    CHINESE_GANJI: Final[tuple[int, ...]] = (0x5b50, 0x4e11, 0x5bc5, 0x536f, 0x8fb0, 0x5df3, 0x5348, 0x672a, 0x7533, 0x9149, 0x620c, 0x4ea5)
+    CHINESE_GAPJA_UNIT: Final[tuple[int, ...]] = (0x5e74, 0x6708, 0x65e5)
 
-    INTERCALATION_STR = [0xc724, 0x958f]
+    INTERCALATION_STR: Final[tuple[int, ...]] = (0xc724, 0x958f)
 
-    KOREAN_LUNAR_DATA = [
+    KOREAN_LUNAR_DATA: Final[tuple[int, ...]] = (
             0x82c60a57, 0x82fec52b, 0x82c40d2a, 0x82c60d55, 0xc30095ad, 0x82c4056a, 0x82c6096d, 0x830054dd, 0xc2c404ad, 0x82c40a4d,
             0x83002e4d, 0x82c40b26, 0xc300ab56, 0x82c60ad5, 0x82c4035a, 0x8300697a, 0xc2c6095b, 0x82c4049b, 0x83004a9b, 0x82c40a4b,
             0xc301caa5, 0x82c406aa, 0x82c60ad5, 0x830092dd, 0xc2c402b5, 0x82c60957, 0x82fe54ae, 0x82c60c97, 0xc2c4064b, 0x82ff254a,
@@ -140,216 +146,216 @@ class KoreanLunarCalendar(object) :
             0xc3004b95, 0x82c406aa, 0x82c60ad5, 0x830026b5, 0xc2c404b6, 0x83006a6e, 0x82c60a57, 0x82c40527, 0xc2fe56a6, 0x82c60d93,
             0x82c405aa, 0x83003b6a, 0xc2c6096d, 0x8300b4af, 0x82c404ae, 0x82c40a4d, 0xc3016d0d, 0x82c40d25, 0x82c40d52, 0x83005dd4,
             0xc2c60b6a, 0x82c6096d, 0x8300255b, 0x82c4049b, 0xc3007a57, 0x82c40a4b, 0x82c40b25, 0x83015b25, 0xc2c406d4, 0x82c60ada,
-            0x830138b6]
+            0x830138b6)
     
-    def __init__(self):
-        self.lunarYear = 0
-        self.lunarMonth = 0
-        self.lunarDay = 0
-        self.isIntercalation = False
+    def __init__(self) -> None:
+        self.lunarYear:int = 0
+        self.lunarMonth:int = 0
+        self.lunarDay:int = 0
+        self.isIntercalation:bool = False
 
-        self.solarYear = 0
-        self.solarMonth = 0
-        self.solarDay = 0
+        self.solarYear:int = 0
+        self.solarMonth:int = 0
+        self.solarDay:int = 0
 
-        self.__gapjaYearInx = [0, 0, 0]
-        self.__gapjaMonthInx = [0, 0, 1]
-        self.__gapjaDayInx = [0, 0, 2]
+        self.__gapjaYearInx:list[int] = [0, 0, 0]
+        self.__gapjaMonthInx:list[int] = [0, 0, 1]
+        self.__gapjaDayInx:list[int] = [0, 0, 2]
 
 
-    def LunarIsoFormat(self):
-        dateStr = "%04d-%02d-%02d" % (self.lunarYear, self.lunarMonth, self.lunarDay)
+    def lunar_iso_format(self) -> str:
+        date_str:str = "%04d-%02d-%02d" % (self.lunarYear, self.lunarMonth, self.lunarDay)
         if self.isIntercalation :
-            dateStr += " Intercalation"
-        return dateStr
+            date_str += " Intercalation"
+        return date_str
 
-    def SolarIsoFormat(self):
+    def solar_iso_format(self) -> str:
         return "%04d-%02d-%02d" % (self.solarYear, self.solarMonth, self.solarDay)
 
-    def __getLunarData(self, year):
+    def __get_lunar_data(self, year:int) -> int:
         return self.KOREAN_LUNAR_DATA[year - self.KOREAN_LUNAR_BASE_YEAR]
 
-    def __getLunarIntercalationMonth(self, lunarData):
-        return (lunarData >> 12) & 0x000F
+    def __get_lunar_intercalation_month(self, lunar_data:int) -> int:
+        return (lunar_data >> 12) & 0x000F
 
-    def __getLunarDays(self, year, month=None, isIntercalation=None):
-        lunarData = self.__getLunarData(year)
+    def __get_lunar_days(self, year:int, month:int|None=None, is_intercalation:bool|None=None) -> int:
+        lunar_data:int = self.__get_lunar_data(year)
 
-        if month is not None and isIntercalation is not None :
-            if (isIntercalation == True) and (self.__getLunarIntercalationMonth(lunarData) == month):
-                days = self.LUNAR_BIG_MONTH_DAY if ((lunarData >>16) & 0x01) > 0 else self.LUNAR_SMALL_MONTH_DAY
+        if month is not None and is_intercalation is not None :
+            if is_intercalation and (self.__get_lunar_intercalation_month(lunar_data) == month):
+                days = self.LUNAR_BIG_MONTH_DAY if ((lunar_data >>16) & 0x01) > 0 else self.LUNAR_SMALL_MONTH_DAY
             else:
-                days = self.LUNAR_BIG_MONTH_DAY if ((lunarData >> (12 - month)) & 0x01) > 0 else self.LUNAR_SMALL_MONTH_DAY
+                days = self.LUNAR_BIG_MONTH_DAY if ((lunar_data >> (12 - month)) & 0x01) > 0 else self.LUNAR_SMALL_MONTH_DAY
         else:
-            days = (lunarData >> 17) & 0x01FF
+            days = (lunar_data >> 17) & 0x01FF
         return days
 
-    def __getLunarDaysBeforeBaseYear(self, year):
-        days = 0
-        for baseYear in range(self.KOREAN_LUNAR_BASE_YEAR, year+1):
-            days += self.__getLunarDays(baseYear)
+    def __get_lunar_days_before_base_year(self, year:int) -> int:
+        days:int = 0
+        for base_year in range(self.KOREAN_LUNAR_BASE_YEAR, year+1):
+            days += self.__get_lunar_days(base_year)
         return days
 
-    def __getLunarDaysBeforeBaseMonth(self, year, month, isIntercalation):
-        days = 0
+    def __get_lunar_days_before_base_month(self, year:int, month:int, is_intercalation:bool) -> int:
+        days:int = 0
         if (year >= self.KOREAN_LUNAR_BASE_YEAR) and (month > 0):
-            for baseMonth in range(1, month+1):
-                days += self.__getLunarDays(year, baseMonth, False)
+            for base_month in range(1, month+1):
+                days += self.__get_lunar_days(year, base_month, False)
 
-            if isIntercalation == True:
-                intercalationMonth = self.__getLunarIntercalationMonth(self.__getLunarData(year))
-                if (intercalationMonth > 0) and intercalationMonth < month+1:
-                    days += self.__getLunarDays(year, intercalationMonth, True)
+            if is_intercalation:
+                intercalation_month = self.__get_lunar_intercalation_month(self.__get_lunar_data(year))
+                if (intercalation_month > 0) and intercalation_month < month+1:
+                    days += self.__get_lunar_days(year, intercalation_month, True)
         return days
 
-    def __getLunarAbsDays(self, year, month, day, isIntercalation):
-        days = self.__getLunarDaysBeforeBaseYear(year-1) + self.__getLunarDaysBeforeBaseMonth(year, month-1, True) + day
-        if (isIntercalation == True) and (self.__getLunarIntercalationMonth(self.__getLunarData(year)) == month):
-            days += self.__getLunarDays(year, month, False)
+    def __get_lunar_abs_days(self, year:int, month:int, day:int, is_intercalation:bool) -> int:
+        days:int = self.__get_lunar_days_before_base_year(year-1) + self.__get_lunar_days_before_base_month(year, month-1, True) + day
+        if is_intercalation and (self.__get_lunar_intercalation_month(self.__get_lunar_data(year)) == month):
+            days += self.__get_lunar_days(year, month, False)
         return days
 
-    def __isSolarIntercalationYear(self, lunarData):
-        return ((lunarData >> 30) & 0x01) > 0
+    def __is_solar_intercalation_year(self, lunar_data:int) -> int:
+        return ((lunar_data >> 30) & 0x01) > 0
 
-    def __getSolarDays(self, year, month=None):
-        lunarData = self.__getLunarData(year)
+    def __get_solar_days(self, year:int, month:int|None=None) -> int:
+        lunar_data:int = self.__get_lunar_data(year)
         if month is not None :
-            days = self.SOLAR_DAYS[12] if (month == 2) and self.__isSolarIntercalationYear(lunarData) else self.SOLAR_DAYS[month - 1]
+            days = self.SOLAR_DAYS[12] if (month == 2) and self.__is_solar_intercalation_year(lunar_data) else self.SOLAR_DAYS[month - 1]
         else:
-            days = self.SOLAR_BIG_YEAR_DAY if self.__isSolarIntercalationYear(lunarData) else self.SOLAR_SMALL_YEAR_DAY
+            days = self.SOLAR_BIG_YEAR_DAY if self.__is_solar_intercalation_year(lunar_data) else self.SOLAR_SMALL_YEAR_DAY
         return days
 
-    def __getSolarDaysBeforeBaseYear(self, year):
-        days = 0
-        for baseYear in range(self.KOREAN_LUNAR_BASE_YEAR, year+1):
-            days += self.__getSolarDays(baseYear)
+    def __get_solar_days_before_base_year(self, year:int) -> int:
+        days:int = 0
+        for base_year in range(self.KOREAN_LUNAR_BASE_YEAR, year+1):
+            days += self.__get_solar_days(base_year)
         return days
 
-    def __getSolarDaysBeforeBaseMonth(self, year, month):
-        days = 0
-        for baseMonth in range(1, month+1):
-            days += self.__getSolarDays(year, baseMonth)
+    def __get_solar_days_before_base_month(self, year:int, month:int) -> int:
+        days:int = 0
+        for base_month in range(1, month+1):
+            days += self.__get_solar_days(year, base_month)
         return days
     
-    def __getSolarAbsDays(self, year, month, day):
-        days = self.__getSolarDaysBeforeBaseYear(year-1) + self.__getSolarDaysBeforeBaseMonth(year, month-1) + day
+    def __get_solar_abs_days(self, year:int, month:int, day:int) -> int:
+        days:int = self.__get_solar_days_before_base_year(year-1) + self.__get_solar_days_before_base_month(year, month-1) + day
         days -= self.SOLAR_LUNAR_DAY_DIFF
         return days
 
-    def __setSolarDateByLunarDate(self, lunarYear, lunarMonth, lunarDay, isIntercalation):
-        absDays = self.__getLunarAbsDays(lunarYear, lunarMonth, lunarDay, isIntercalation)
-        solarYear = 0
-        solarMonth = 0
-        solarDay = 0
+    def __set_solar_date_by_lunar_date(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool) -> None:
+        abs_days = self.__get_lunar_abs_days(lunar_year, lunar_month, lunar_day, is_intercalation)
+        solar_year:int = 0
+        solar_month:int = 0
+        solar_day:int = 0
 
-        solarYear = lunarYear if (absDays < self.__getSolarAbsDays(lunarYear+1, 1, 1)) else lunarYear+1
+        solar_year = lunar_year if (abs_days < self.__get_solar_abs_days(lunar_year+1, 1, 1)) else lunar_year+1
 
         for month in range(12, 0, -1) :
-            absDaysByMonth = self.__getSolarAbsDays(solarYear, month, 1)
-            if (absDays >= absDaysByMonth) :
-                solarMonth = month
-                solarDay = absDays - absDaysByMonth +1
+            abs_days_by_month = self.__get_solar_abs_days(solar_year, month, 1)
+            if (abs_days >= abs_days_by_month) :
+                solar_month = month
+                solar_day = abs_days - abs_days_by_month +1
                 break
 
-        self.solarYear = solarYear
-        self.solarMonth = solarMonth
-        self.solarDay  = solarDay
+        self.solarYear = solar_year
+        self.solarMonth = solar_month
+        self.solarDay  = solar_day
 
-    def __setLunarDateBySolarDate(self, solarYear, solarMonth, solarDay):
-        absDays = self.__getSolarAbsDays(solarYear, solarMonth, solarDay)
-        lunarYear = solarYear if (absDays >= self.__getLunarAbsDays(solarYear, 1, 1, False)) else solarYear-1
-        lunarMonth = 0
-        lunarDay = 0
-        isIntercalation = False
+    def __set_lunar_date_by_solar_date(self, solar_year:int, solar_month:int, solar_day:int) -> None:
+        abs_days:int = self.__get_solar_abs_days(solar_year, solar_month, solar_day)
+        lunar_year:int = solar_year if (abs_days >= self.__get_lunar_abs_days(solar_year, 1, 1, False)) else solar_year-1
+        lunar_month:int = 0
+        lunar_day:int = 0
+        is_intercalation:bool = False
         
         for month in range(12, 0, -1) :
-            absDaysByMonth = self.__getLunarAbsDays(lunarYear, month, 1, False)
-            if absDays >= absDaysByMonth:
-                lunarMonth = month
-                if self.__getLunarIntercalationMonth(self.__getLunarData(lunarYear)) == month :
-                    isIntercalation = absDays >= self.__getLunarAbsDays(lunarYear, month, 1, True)
+            abs_days_by_month = self.__get_lunar_abs_days(lunar_year, month, 1, False)
+            if abs_days >= abs_days_by_month:
+                lunar_month = month
+                if self.__get_lunar_intercalation_month(self.__get_lunar_data(lunar_year)) == month :
+                    is_intercalation = abs_days >= self.__get_lunar_abs_days(lunar_year, month, 1, True)
                 
-                lunarDay = absDays - self.__getLunarAbsDays(lunarYear, lunarMonth, 1, isIntercalation) + 1
+                lunar_day = abs_days - self.__get_lunar_abs_days(lunar_year, lunar_month, 1, is_intercalation) + 1
                 break
 
-        self.lunarYear = lunarYear
-        self.lunarMonth = lunarMonth
-        self.lunarDay = lunarDay        
-        self.isIntercalation = isIntercalation
+        self.lunarYear = lunar_year
+        self.lunarMonth = lunar_month
+        self.lunarDay = lunar_day        
+        self.isIntercalation = is_intercalation
 
-    def __checkValidDate(self, isLunar, isIntercalation, year, month, day):
-        isValid = False
-        dateValue = year*10000 + month*100 + day
+    def __check_valid_date(self, is_lunar:bool, is_intercalation:bool, year:int, month:int, day:int) -> bool:
+        is_valid:bool = False
+        date_value:int = year*10000 + month*100 + day
         #1582. 10. 5 ~ 1582. 10. 14 is not valid
-        minValue = self.KOREAN_LUNAR_MIN_VALUE if isLunar else self.KOREAN_SOLAR_MIN_VALUE
-        maxValue = self.KOREAN_LUNAR_MAX_VALUE if isLunar else self.KOREAN_SOLAR_MAX_VALUE
+        min_value:int = self.KOREAN_LUNAR_MIN_VALUE if is_lunar else self.KOREAN_SOLAR_MIN_VALUE
+        max_value:int = self.KOREAN_LUNAR_MAX_VALUE if is_lunar else self.KOREAN_SOLAR_MAX_VALUE
 
-        if minValue <= dateValue and maxValue >= dateValue :
+        if min_value <= date_value and max_value >= date_value : # noqa: SIM102
             if month > 0 and month < 13 and day > 0 :
-                dayLimit = self.__getLunarDays(year, month, isIntercalation) if isLunar else self.__getSolarDays(year, month)
-                if isLunar == False and year == 1582 and month == 10 :
+                day_limit = self.__get_lunar_days(year, month, is_intercalation) if is_lunar else self.__get_solar_days(year, month)
+                if not is_lunar and year == 1582 and month == 10 :
                     if day > 4 and day < 15 :
-                        return isValid
+                        return is_valid
                     else:
-                        dayLimit += 10
+                        day_limit += 10
 
-                if day <= dayLimit :
-                    isValid = True
+                if day <= day_limit :
+                    is_valid = True
 
-        return isValid                
+        return is_valid                
 
-    def setLunarDate(self, lunarYear, lunarMonth, lunarDay, isIntercalation) :
-        isValid = False
-        if self.__checkValidDate(True, isIntercalation, lunarYear, lunarMonth, lunarDay):
-            self.lunarYear = lunarYear
-            self.lunarMonth = lunarMonth
-            self.lunarDay = lunarDay
-            self.isIntercalation = isIntercalation and (self.__getLunarIntercalationMonth(self.__getLunarData(lunarYear)) == lunarMonth)
-            self.__setSolarDateByLunarDate(lunarYear, lunarMonth, lunarDay, isIntercalation)
-            isValid = True
-        return isValid
+    def set_lunar_date(self, lunar_year:int, lunar_month:int, lunar_day:int, is_intercalation:bool) -> bool:
+        is_valid:bool = False
+        if self.__check_valid_date(True, is_intercalation, lunar_year, lunar_month, lunar_day):
+            self.lunarYear = lunar_year
+            self.lunarMonth = lunar_month
+            self.lunarDay = lunar_day
+            self.isIntercalation = is_intercalation and (self.__get_lunar_intercalation_month(self.__get_lunar_data(lunar_year)) == lunar_month)
+            self.__set_solar_date_by_lunar_date(lunar_year, lunar_month, lunar_day, is_intercalation)
+            is_valid = True
+        return is_valid
 
-    def setSolarDate(self, solarYear, solarMonth, solarDay):
-        isValid = False
-        if self.__checkValidDate(False, False, solarYear, solarMonth, solarDay) :
-            self.solarYear = solarYear
-            self.solarMonth = solarMonth
-            self.solarDay = solarDay
-            self.__setLunarDateBySolarDate(solarYear, solarMonth, solarDay)
-            isValid = True
-        return isValid
+    def set_solar_date(self, solar_year:int, solar_month:int, solar_day:int) -> bool:
+        is_valid:bool = False
+        if self.__check_valid_date(False, False, solar_year, solar_month, solar_day) :
+            self.solarYear = solar_year
+            self.solarMonth = solar_month
+            self.solarDay = solar_day
+            self.__set_lunar_date_by_solar_date(solar_year, solar_month, solar_day)
+            is_valid = True
+        return is_valid
 
-    def __getGapJa(self):
-        absDays = self.__getLunarAbsDays(self.lunarYear, self.lunarMonth, self.lunarDay, self.isIntercalation)
-        if absDays > 0 :
+    def __get_gap_ja(self) -> None:
+        abs_days:int = self.__get_lunar_abs_days(self.lunarYear, self.lunarMonth, self.lunarDay, self.isIntercalation)
+        if abs_days > 0 :
             self.__gapjaYearInx[0] = ((self.lunarYear + 6) - self.KOREAN_LUNAR_BASE_YEAR) % len(self.KOREAN_CHEONGAN)
             self.__gapjaYearInx[1] = ((self.lunarYear + 0) - self.KOREAN_LUNAR_BASE_YEAR) % len(self.KOREAN_GANJI)
             
-            monthCount = self.lunarMonth
-            monthCount += 12 * (self.lunarYear - self.KOREAN_LUNAR_BASE_YEAR)
-            self.__gapjaMonthInx[0] = (monthCount + 3) % len(self.KOREAN_CHEONGAN)
-            self.__gapjaMonthInx[1] = (monthCount + 1) % len(self.KOREAN_GANJI)
+            month_count = self.lunarMonth
+            month_count += 12 * (self.lunarYear - self.KOREAN_LUNAR_BASE_YEAR)
+            self.__gapjaMonthInx[0] = (month_count + 3) % len(self.KOREAN_CHEONGAN)
+            self.__gapjaMonthInx[1] = (month_count + 1) % len(self.KOREAN_GANJI)
             
-            self.__gapjaDayInx[0] = (absDays + 4) % len(self.KOREAN_CHEONGAN)
-            self.__gapjaDayInx[1] = (absDays + 2) % len(self.KOREAN_GANJI)
+            self.__gapjaDayInx[0] = (abs_days + 4) % len(self.KOREAN_CHEONGAN)
+            self.__gapjaDayInx[1] = (abs_days + 2) % len(self.KOREAN_GANJI)
 
-    def getGapJaString(self) :
-        self.__getGapJa()
-        gapjaStr = "%c%c%c %c%c%c %c%c%c" % (chr(self.KOREAN_CHEONGAN[self.__gapjaYearInx[0]]), chr(self.KOREAN_GANJI[self.__gapjaYearInx[1]]), chr(self.KOREAN_GAPJA_UNIT[self.__gapjaYearInx[2]]),
+    def get_gap_ja_string(self) -> str:
+        self.__get_gap_ja()
+        gapja_str:str = "%c%c%c %c%c%c %c%c%c" % (chr(self.KOREAN_CHEONGAN[self.__gapjaYearInx[0]]), chr(self.KOREAN_GANJI[self.__gapjaYearInx[1]]), chr(self.KOREAN_GAPJA_UNIT[self.__gapjaYearInx[2]]),
         chr(self.KOREAN_CHEONGAN[self.__gapjaMonthInx[0]]), chr(self.KOREAN_GANJI[self.__gapjaMonthInx[1]]), chr(self.KOREAN_GAPJA_UNIT[self.__gapjaMonthInx[2]]),
         chr(self.KOREAN_CHEONGAN[self.__gapjaDayInx[0]]), chr(self.KOREAN_GANJI[self.__gapjaDayInx[1]]), chr(self.KOREAN_GAPJA_UNIT[self.__gapjaDayInx[2]]))
 
-        if self.isIntercalation == True :
-            gapjaStr += " (%c%c)" % (chr(self.INTERCALATION_STR[0]), chr(self.KOREAN_GAPJA_UNIT[1]))
-        return gapjaStr
+        if self.isIntercalation:
+            gapja_str += " (%c%c)" % (chr(self.INTERCALATION_STR[0]), chr(self.KOREAN_GAPJA_UNIT[1]))
+        return gapja_str
         
     
-    def getChineseGapJaString(self) :
-        self.__getGapJa()
-        gapjaStr = "%c%c%c %c%c%c %c%c%c" % (chr(self.CHINESE_CHEONGAN[self.__gapjaYearInx[0]]), chr(self.CHINESE_GANJI[self.__gapjaYearInx[1]]), chr(self.CHINESE_GAPJA_UNIT[self.__gapjaYearInx[2]]),
+    def get_chinese_gap_ja_string(self) -> str:
+        self.__get_gap_ja()
+        gapja_str:str = "%c%c%c %c%c%c %c%c%c" % (chr(self.CHINESE_CHEONGAN[self.__gapjaYearInx[0]]), chr(self.CHINESE_GANJI[self.__gapjaYearInx[1]]), chr(self.CHINESE_GAPJA_UNIT[self.__gapjaYearInx[2]]),
         chr(self.CHINESE_CHEONGAN[self.__gapjaMonthInx[0]]), chr(self.CHINESE_GANJI[self.__gapjaMonthInx[1]]), chr(self.CHINESE_GAPJA_UNIT[self.__gapjaMonthInx[2]]),
         chr(self.CHINESE_CHEONGAN[self.__gapjaDayInx[0]]), chr(self.CHINESE_GANJI[self.__gapjaDayInx[1]]), chr(self.CHINESE_GAPJA_UNIT[self.__gapjaDayInx[2]]))
 
-        if self.isIntercalation == True :
-            gapjaStr += " (%c%c)" % (chr(self.INTERCALATION_STR[1]), chr(self.CHINESE_GAPJA_UNIT[1]))
-        return gapjaStr
+        if self.isIntercalation:
+            gapja_str += " (%c%c)" % (chr(self.INTERCALATION_STR[1]), chr(self.CHINESE_GAPJA_UNIT[1]))
+        return gapja_str
