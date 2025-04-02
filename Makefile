@@ -21,7 +21,7 @@ format: ## Run formatter [dev]
 	uv run ruff format --diff .
 
 tox-run: ## Launch Tox [dev]
-	uv run tox
+	uv run tox --parallel
 
 
 
