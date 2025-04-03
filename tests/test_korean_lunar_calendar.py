@@ -126,7 +126,7 @@ class TestKoreanLunarCalendar():
 
 
 	@pytest.mark.parametrize("year, month, day, is_intercalation, res", [
-		# 2025 has lunar intercalation [29 days] in June [30 days] 
+		# 2025 has lunar intercalation [29 days] in June [30 days]
 		(2025, 1, 1, True, 374360),
 		(2025, 12, 29, True, 374743),
 		(2025, 5, 29, True, 374506),
@@ -150,7 +150,7 @@ class TestKoreanLunarCalendar():
 		assert getattr(self.klc, '_KoreanLunarCalendar__get_lunar_abs_days')(year, month, day, is_intercalation) == res
 
 	@pytest.mark.parametrize("lunar_data, res", [
-		
+
 		(0b1111_1111_1111_1111_1111_1111_1111_1111, True),
 		(0b1011_1111_1111_1111_1111_1111_1111_1111, False),
 		(0b0000_0000_0000_0000_0001_0000_0000_0000, False),
@@ -160,7 +160,7 @@ class TestKoreanLunarCalendar():
 		assert getattr(self.klc, '_KoreanLunarCalendar__is_solar_intercalation_year')(lunar_data) == res
 
 	@pytest.mark.parametrize("lunar_data, month, res", [
-		
+
 		(0b1011_1111_1111_1111_1111_1111_1111_1111, 1, 31),
 		(0b0000_0000_0000_0000_0000_0000_0000_0000, 1, 31),
 		(0b1111_1111_1111_1111_1111_1111_1111_1111, 1, 31),
@@ -190,7 +190,7 @@ class TestKoreanLunarCalendar():
 		assert getattr(self.klc, '_KoreanLunarCalendar__get_solar_days_')(lunar_data, month) == res
 
 	@pytest.mark.parametrize("year, month, res", [
-		
+
 		(2025, 4, 30),
 		(2025, 12, 31),
 		(2025, 2, 28),
@@ -214,7 +214,7 @@ class TestKoreanLunarCalendar():
 		assert getattr(self.klc, '_KoreanLunarCalendar__get_solar_days')(year, month) == res
 
 	@pytest.mark.parametrize("year, res", [
-		
+
 		(1000, 365),
 		(1001, 730),
 		(1002, 1095),
@@ -228,7 +228,7 @@ class TestKoreanLunarCalendar():
 		assert getattr(self.klc, '_KoreanLunarCalendar__get_solar_days_before_base_year')(year) == res
 
 	@pytest.mark.parametrize("year, month, res", [
-		
+
 		(1000, 1, 31),
 		(1000, 2, 59),
 		(1000, 3, 90),
@@ -245,7 +245,7 @@ class TestKoreanLunarCalendar():
 		assert getattr(self.klc, '_KoreanLunarCalendar__get_solar_days_before_base_month')(year, month) == res
 
 	@pytest.mark.parametrize("year, month, day, res", [
-		
+
 		(1000, 2, 13, 1),
 		(1000, 2, 14, 2),
 		(1000, 2, 25, 13),
@@ -271,7 +271,7 @@ class TestKoreanLunarCalendar():
 
 
 	@pytest.mark.parametrize("lunar_year, lunar_month, lunar_day, is_intercalation, res", [
-		
+
 		(1000, 1, 1, True, (1000, 2, 13)),
 		(1000, 1, 2, True, (1000, 2, 14)),
 		# Lunar new year 2025/01/29
@@ -284,7 +284,7 @@ class TestKoreanLunarCalendar():
 		(2025, 6, 1, False,  (2025, 6, 25)),
 		(2025, 6, 2, True,   (2025, 7, 26)),
 		(2025, 6, 2, False,  (2025, 6, 26)),
-		(2025, 6, 30, True,  (2025, 8, 23)), # Notice ovelap with result of (2025, 7, 1) cause intercalation month is only 29 days not 30!
+		(2025, 6, 30, True,  (2025, 8, 23)), # Notice overlap with result of (2025, 7, 1) cause intercalation month is only 29 days not 30!
 		(2025, 6, 30, False, (2025, 7, 24)),
 		(2025, 7, 1, True,   (2025, 8, 23)),
 		(2025, 7, 1, False,  (2025, 8, 23)),
@@ -307,7 +307,7 @@ class TestKoreanLunarCalendar():
 		assert (self.klc.solar_year, self.klc.solar_month, self.klc.solar_day) == res
 
 	@pytest.mark.parametrize("year, month, day, is_intercalation", [
-		
+
 		(1000, 2, 13, True),
 		(1000, 2, 13, False),
 		(2025, 12, 20, True),
@@ -326,7 +326,7 @@ class TestKoreanLunarCalendar():
 		assert (self.klc.solar_year, self.klc.solar_month, self.klc.solar_day) == (year, month, day)
 
 	@pytest.mark.parametrize("solar_year, solar_month, solar_day, res", [
-		
+
 		(1000, 2, 13, (1000, 1, 1, False)),
 		(1000, 2, 14, (1000, 1, 2, False)),
 		# Lunar new year 2025/01/29
@@ -346,7 +346,7 @@ class TestKoreanLunarCalendar():
 
 		(2025, 11, 27, (2025, 10, 8, False)),
 		(2025, 11, 28, (2025, 10, 9, False)),
-		
+
 		(2026, 2, 17, (2026, 1, 1, False)),
 
 	])
@@ -355,7 +355,7 @@ class TestKoreanLunarCalendar():
 		assert (self.klc.lunar_year, self.klc.lunar_month, self.klc.lunar_day, self.klc.is_intercalation) == res
 
 	@pytest.mark.parametrize("is_lunar, is_intercalation, year, month, day, res", [
-		
+
 		# Test Intercalation
 		(True, False, 1000, 1, 1, True),
 		(True, True, 1000, 1, 1, False),
@@ -399,7 +399,7 @@ class TestKoreanLunarCalendar():
 
 
 	@pytest.mark.parametrize("lunar_year, lunar_month, lunar_day, is_intercalation, is_valid, res", [
-		
+
 		(1000, 1, 1, False, True, (1000, 2, 13, 1000, 1, 1, False)),
 		(999, 1, 1, False, False, (0, 1, 1, 0, 1, 1, False)),
 
@@ -409,7 +409,7 @@ class TestKoreanLunarCalendar():
 		assert (self.klc.solar_year, self.klc.solar_month, self.klc.solar_day, self.klc.lunar_year, self.klc.lunar_month, self.klc.lunar_day, self.klc.is_intercalation) == res
 
 	@pytest.mark.parametrize("solar_year, solar_month, solar_day, is_valid, res", [
-		
+
 		(1000, 2, 13, True, (1000, 2, 13, 1000, 1, 1, False)),
 		(1000, 2, 12, False, (0, 1, 1, 0, 1, 1, False)),
 
@@ -420,7 +420,7 @@ class TestKoreanLunarCalendar():
 
 
 	@pytest.mark.parametrize("lunar_year, lunar_month, lunar_day, is_intercalation, gapja_year_inx, gapja_month_inx, gapja_day_inx", [
-		
+
 		(1000, 1, 1, False, [6, 0, 0], [4, 2, 1], [5, 3, 2]),
 
 	])
@@ -498,7 +498,7 @@ class TestKoreanLunarCalendar():
 
 
 	@pytest.mark.parametrize("lunar_year, lunar_month, lunar_day, is_intercalation, res", [
-		
+
 		(2025, 1, 1, False, "을사년 무인월 무술일"), # Indeed: 2025: Wood Snake
 		(2025, 6, 1, True, "을사년 계미월 을미일 (윤월)"),
 	])
@@ -507,7 +507,7 @@ class TestKoreanLunarCalendar():
 		assert self.klc.get_gap_ja_string() == res
 
 	@pytest.mark.parametrize("lunar_year, lunar_month, lunar_day, is_intercalation, res", [
-		
+
 		(2025, 1, 1, False, "乙巳年 戊寅月 戊戌日"),
 		(2025, 6, 1, True, "乙巳年 癸未月 乙未日 (閏月)"),
 	])

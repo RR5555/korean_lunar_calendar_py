@@ -109,7 +109,7 @@ Check for invalid date input
 ```python
 calendar = KoreanLunarCalendar()
 
-# invald date
+# invalid date
 calendar.setLunarDate(99, 1, 1, False) # => return False
 calendar.setSolarDate(2051, 1, 1) # => return False
 
@@ -140,8 +140,8 @@ calendar.setSolarDate(2050, 12, 31) # => return True
 
 ---
 
-* A lunar calendar year is made up of synodic months, which are complete cycles of the moon's phases. 
-* A synodic month takes about 29.53 days to complete. 
+* A lunar calendar year is made up of synodic months, which are complete cycles of the moon's phases.
+* A synodic month takes about 29.53 days to complete.
 * To keep a lunar calendar in sync with the seasons, days are sometimes added in a process called intercalation.
 
 ---
@@ -263,13 +263,13 @@ MJD's are sometimes used for modern-era scientific data.
 * 9 Dec 1582 was followed by 20 Dec 1582
 * Alsace: 5 Feb 1682 was followed by 16 Feb 1682
 * Lorraine: 16 Feb 1760 was followed by 28 Feb 1760
-* Strasbourg: February 1682 
+* Strasbourg: February 1682
 **Germany:**
 * Different states on different dates:
   * Catholic states on various dates in 1583-1585
   * Prussia: 22 Aug 1610 was followed by 2 Sep 1610
   * Protestant states: 18 Feb 1700 was followed by 1 Mar 1700
-  * (Many local variations) 
+  * (Many local variations)
 **Great Britain and colonies:**
 * 2 Sep 1752 was followed by 14 Sep 1752
 
@@ -330,7 +330,7 @@ For these calendars one can distinguish two systems of numbering years BC. [Bede
 
 Although the nominal [Julian calendar](https://en.wikipedia.org/wiki/Julian_calendar) began in 45 BC, leap years between 45 BC and 1 BC were irregular (see [Leap year error](https://en.wikipedia.org/wiki/Julian_calendar#Leap_year_error)). Thus the Julian calendar with quadrennial leap years was only used from the end of AD 4 until 1582 or later (contingent on the specific nation in question).
 
-The proleptic Gregorian calendar is sometimes used in [computer software](https://en.wikipedia.org/wiki/Computer_software) to simplify identifying pre-Gregorian dates, e. g. in [PostgreSQL](https://en.wikipedia.org/wiki/PostgreSQL),[5] [MySQL](https://en.wikipedia.org/wiki/MySQL),[6] [SQLite](https://en.wikipedia.org/wiki/SQLite),[7] [PHP](https://en.wikipedia.org/wiki/SQLite), [CIM](https://en.wikipedia.org/wiki/Common_Information_Model_(computing)), [Delphi](https://en.wikipedia.org/wiki/Delphi_(programming_language)) and [Python](https://en.wikipedia.org/wiki/Python_(programming_language)).[8] 
+The proleptic Gregorian calendar is sometimes used in [computer software](https://en.wikipedia.org/wiki/Computer_software) to simplify identifying pre-Gregorian dates, e. g. in [PostgreSQL](https://en.wikipedia.org/wiki/PostgreSQL),[5] [MySQL](https://en.wikipedia.org/wiki/MySQL),[6] [SQLite](https://en.wikipedia.org/wiki/SQLite),[7] [PHP](https://en.wikipedia.org/wiki/SQLite), [CIM](https://en.wikipedia.org/wiki/Common_Information_Model_(computing)), [Delphi](https://en.wikipedia.org/wiki/Delphi_(programming_language)) and [Python](https://en.wikipedia.org/wiki/Python_(programming_language)).[8]
 
 ''
 

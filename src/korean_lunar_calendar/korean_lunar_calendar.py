@@ -464,7 +464,7 @@ class KoreanLunarCalendar:
 		return days
 
 	def __get_solar_days_before_base_year(self, year: int) -> int:
-		"""Get duration, in days, between the begining of the base year (1000) and the end of the given year **year**.
+		"""Get duration, in days, between the beginning of the base year (1000) and the end of the given year **year**.
 
 		Args:
 			year (int): Year
@@ -478,7 +478,7 @@ class KoreanLunarCalendar:
 		return days
 
 	def __get_solar_days_before_base_month(self, year: int, month: int) -> int:
-		"""Get duration, in days, between the begining of the year and the end of the given month for year **year**.
+		"""Get duration, in days, between the beginning of the year and the end of the given month for year **year**.
 
 		Args:
 			year (int): Year
@@ -495,7 +495,7 @@ class KoreanLunarCalendar:
 	def __get_solar_abs_days(self, year: int, month: int, day: int) -> int:
 		"""Get duration in days between base lunar date (from `self.KOREAN_LUNAR_MIN_VALUE`: 1000/01/01) - or equivalently, base solar date (from `self.KOREAN_SOLAR_MIN_VALUE`: 1000/02/13) -, and the given solar date (included).
 
-		Basically, get the duration in days from the beginning of the base solar year (1000) to the given solar date. Then, substract the `self.SOLAR_LUNAR_DAY_DIFF`: 43 days, to get the difference to the beginning of the base lunar year.
+		Basically, get the duration in days from the beginning of the base solar year (1000) to the given solar date. Then, subtract the `self.SOLAR_LUNAR_DAY_DIFF`: 43 days, to get the difference to the beginning of the base lunar year.
 
 		Args:
 			year (int): Year
@@ -549,14 +549,14 @@ class KoreanLunarCalendar:
 		lunar_month:int = 0
 		lunar_day:int = 0
 		is_intercalation:bool = False
-		
+
 		for month in range(12, 0, -1) :
 			abs_days_by_month = self.__get_lunar_abs_days(lunar_year, month, 1, False)
 			if abs_days >= abs_days_by_month:
 				lunar_month = month
 				if self.__get_lunar_intercalation_month(self.__get_lunar_data(lunar_year)) == month :
 					is_intercalation = abs_days >= self.__get_lunar_abs_days(lunar_year, month, 1, True)
-				
+
 				lunar_day = abs_days - self.__get_lunar_abs_days(lunar_year, lunar_month, 1, is_intercalation) + 1
 				break
 
@@ -675,12 +675,12 @@ class KoreanLunarCalendar:
 		if abs_days > 0 :
 			self.__gapjaYearInx[0] = ((self.lunar_year + 6) - self.KOREAN_LUNAR_BASE_YEAR) % len(self.KOREAN_CHEONGAN)
 			self.__gapjaYearInx[1] = ((self.lunar_year + 0) - self.KOREAN_LUNAR_BASE_YEAR) % len(self.KOREAN_GANJI)
-			
+
 			month_count = self.lunar_month
 			month_count += 12 * (self.lunar_year - self.KOREAN_LUNAR_BASE_YEAR)
 			self.__gapjaMonthInx[0] = (month_count + 3) % len(self.KOREAN_CHEONGAN)
 			self.__gapjaMonthInx[1] = (month_count + 1) % len(self.KOREAN_GANJI)
-			
+
 			self.__gapjaDayInx[0] = (abs_days + 4) % len(self.KOREAN_CHEONGAN)
 			self.__gapjaDayInx[1] = (abs_days + 2) % len(self.KOREAN_GANJI)
 
