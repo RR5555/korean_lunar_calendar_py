@@ -13,6 +13,8 @@ docker-run: ## Run the Docker container
 docker-bash: ## Access container bash
 	docker exec -it $(NAME) /bin/bash
 
+dev-install: ## uv sync
+	uv sync --all-groups
 
 lint: ## Run linter [dev]
 	uv run ruff check .
@@ -20,9 +22,11 @@ lint: ## Run linter [dev]
 format: ## Run formatter [dev]
 	uv run ruff format --diff .
 
-tox-run: ## Launch Tox [dev]
+tox-rerun: ## Launch Tox [dev, tox]
 	uv run tox --parallel
 
+tox-run: ## Launch Tox [dev, tox]
+	uv run tox -r --parallel
 
 
 # https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
