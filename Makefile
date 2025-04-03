@@ -28,6 +28,9 @@ tox-rerun: ## Launch Tox [dev, tox]
 tox-run: ## Launch Tox [dev, tox]
 	uv run tox -r --parallel
 
+pre-commit: ## Run pre-commit
+	# uv run pre-commit install
+	uv run pre-commit run --all-files --show-diff-on-failure
 
 # https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .PHONY: help

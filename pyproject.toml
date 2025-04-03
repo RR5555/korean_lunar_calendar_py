@@ -42,5 +42,8 @@ dev = [
     "ruff",
 ]
 tox = [
-    "tox-uv; python_version >= '3.9'",
+	"tox-uv; python_version >= '3.9'",
+]
+pre-commit = [
+	"pre-commit-uv; python_version >= '3.9'"
 ]
