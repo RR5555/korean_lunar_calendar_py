@@ -1,5 +1,5 @@
 # korean_lunar_calendar
-> Library to convert Korean lunar-calendar to Gregorian calendar.
+> Library to convert Korean lunar-calendar to proleptic Gregorian calendar.
 
 ## Overview
 Korean calendar and Chinese calendar is same lunar calendar but have different date.
