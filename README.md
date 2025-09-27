@@ -51,16 +51,16 @@ Korean Solar Date -> Korean Lunar Date (양력 -> 음력)
 calendar = KoreanLunarCalendar()
 
 # params : year(년), month(월), day(일)
-calendar.setSolarDate(2017, 6, 24)
+calendar.set_solar_date(2017, 6, 24)
 
 # Lunar Date (ISO Format)
-print(calendar.LunarIsoFormat())
+print(calendar.lunar_iso_format())
 
 # Korean GapJa String
-print(calendar.getGapJaString())
+print(calendar.get_gap_ja_string())
 
 # Chinese GapJa String
-print(calendar.getChineseGapJaString())
+print(calendar.get_chinese_gap_ja_string())
 ```
 
 ```
@@ -76,16 +76,16 @@ Korean Lunar Date -> Korean Solar Date (음력 -> 양력)
 calendar = KoreanLunarCalendar()
 
 # params : year(년), month(월), day(일), intercalation(윤달여부)
-calendar.setLunarDate(1956, 1, 21, False)
+calendar.set_lunar_date(1956, 1, 21, False)
 
 # Solar Date (ISO Format)
-print(calendar.SolarIsoFormat())
+print(calendar.solar_iso_format())
 
 # Korean GapJa String
-print(calendar.getGapJaString())
+print(calendar.get_gap_ja_string())
 
 # Chinese GapJa String
-print(calendar.getChineseGapJaString())
+print(calendar.get_chinese_gap_ja_string())
 ```
 
 ```
@@ -103,12 +103,12 @@ Check for invalid date input
 calendar = KoreanLunarCalendar()
 
 # invalid date
-calendar.setLunarDate(99, 1, 1, False) # => return False
-calendar.setSolarDate(2051, 1, 1) # => return False
+calendar.set_lunar_date(99, 1, 1, False) # => return False
+calendar.set_solar_date(2051, 1, 1) # => return False
 
 # OK
-calendar.setLunarDate(1000, 1, 1, False) # => return True
-calendar.setSolarDate(2050, 12, 31) # => return True
+calendar.set_lunar_date(1000, 1, 1, False) # => return True
+calendar.set_solar_date(2050, 12, 31) # => return True
 ```
 
 ## Other languages
