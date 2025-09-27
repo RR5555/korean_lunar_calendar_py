@@ -1,19 +1,11 @@
-"""Library to convert between Solar and Lunar dates.
+# -*- coding: utf-8 -*-
 
-Modified from:
-KoreanLunarCalendar [korean_lunar_calendar/korean_lunar_calendar.py](https://github.com/usingsky/korean_lunar_calendar_py/blob/master/korean_lunar_calendar/korean_lunar_calendar.py)
-Here is a library to convert Korean lunar-calendar to Gregorian calendar.
-Korean calendar and Chinese calendar is same lunar calendar but have different date.
+"""
+KoreanLunarCalendar
+Here is a library to convert Korean lunar-calendar to proleptic Gregorian calendar.
+Korean calendar and Chinese calendar have the same lunar calendar, but have different dates.
 This follow the KARI(Korea Astronomy and Space Science Institute)
 @author : usingsky@gmail.com
-MIT Licence
-
----
-
-To Gregorian proleptic calendar.
-
-By:
-@author : https://github.com/RR5555
 """
 
 from typing import Final
@@ -580,7 +572,7 @@ class KoreanLunarCalendar:
 		"""
 		is_valid:bool = False
 		date_value:int = year*10000 + month*100 + day
-		#1582. 10. 5 ~ 1582. 10. 14 is not valid when strictly considering Julian/Gregorian: But is valid in Gregorian Proleptic
+		#1582. 10. 5 ~ 1582. 10. 14 is not valid when strictly considering Julian/Gregorian: But is valid in Proleptic Gregorian
 		min_value:int = self.KOREAN_LUNAR_MIN_VALUE if is_lunar else self.KOREAN_SOLAR_MIN_VALUE
 		max_value:int = self.KOREAN_LUNAR_MAX_VALUE if is_lunar else self.KOREAN_SOLAR_MAX_VALUE
 
