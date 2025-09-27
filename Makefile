@@ -16,6 +16,9 @@ docker-bash: ## Access container bash
 dev-install: ## uv sync
 	uv sync --all-groups
 
+mypy: ## Run Static Type Checker Mypy [dev]
+	uv run mypy .
+
 lint: ## Run linter [dev]
 	uv run ruff check .
 
