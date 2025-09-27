@@ -6,8 +6,8 @@ korean\_lunar\_calendar\_py
 Overview
 ^^^^^^^^
 
-Here is a library to convert Korean lunar-calendar to Gregorian
-calendar.
+Here is a library to convert Korean lunar-calendar to proleptic
+Gregorian calendar.
 
 Korean calendar and Chinese calendar is same lunar calendar but have
 different date.
@@ -43,13 +43,13 @@ To use
 
         calendar = KoreanLunarCalendar()
         # params : year(년), month(월), day(일)
-        calendar.setSolarDate(2017, 6, 24)
+        calendar.set_solar_date(2017, 6, 24)
         # Lunar Date (ISO Format)
-        print(calendar.LunarIsoFormat())
+        print(calendar.lunar_iso_format())
         # Korean GapJa String
-        print(calendar.getGapJaString())
+        print(calendar.get_gap_ja_string())
         # Chinese GapJa String
-        print(calendar.getChineseGapJaString())
+        print(calendar.get_chinese_gap_ja_string())
 
 ::
 
@@ -63,13 +63,13 @@ To use
     .. code:: python
 
         # params : year(년), month(월), day(일), intercalation(윤달여부)
-        calendar.setLunarDate(1956, 1, 21, False)
+        calendar.set_lunar_date(1956, 1, 21, False)
         # Solar Date (ISO Format)
-        print(calendar.SolarIsoFormat())
+        print(calendar.solar_iso_format())
         # Korean GapJa String
-        print(calendar.getGapJaString())
+        print(calendar.get_gap_ja_string())
         # Chinese GapJa String
-        print(calendar.getChineseGapJaString())
+        print(calendar.get_chinese_gap_ja_string())
 
 ::
 
